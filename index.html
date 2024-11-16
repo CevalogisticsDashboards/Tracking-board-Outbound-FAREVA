@@ -11,7 +11,6 @@
             overflow-x: hidden;
             text-align: center;
         }
-
         /* Container para o título e logo */
         .header-container {
             background-color: #0b1b44;
@@ -21,7 +20,6 @@
             justify-content: center;
             align-items: center;
         }
-
         /* Estilo da logo */
         .logo {
             position: absolute;
@@ -31,7 +29,6 @@
             height: 80px; /* Ajuste conforme necessário */
             width: auto;
         }
-
         /* Estilização do título principal com sombra */
         h1 {
             font-size: 4.5em;
@@ -40,8 +37,6 @@
             color: white;
             text-shadow: 4px 4px 8px rgba(0, 0, 139, 0.6), 0 0 10px rgba(0, 0, 139, 0.4);
         }
-
-        /* Resto dos estilos permanecem iguais */
         .tab-buttons {
             margin-top: 20px;
             margin-bottom: 5px;
@@ -51,7 +46,6 @@
             align-items: center;
             position: relative;
         }
-
         .tab-button {
             padding: 10px 100px;
             font-size: 14px;
@@ -63,18 +57,15 @@
             border-radius: 5px;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
-
         .tab-button:hover {
             background-color: #1a2f6f;
             color: white;
         }
-
         .tab-button.active {
             background-color: #0b1b44;
             color: white;
             font-weight: bold;
         }
-
         .toggle-timer {
             position: absolute;
             right: 10px;
@@ -87,113 +78,175 @@
             border-radius: 5px;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
-
         .toggle-timer:hover {
             background-color: #1a2f6f;
             color: white;
         }
-
         .toggle-timer.active {
             background-color: #0b1b44;
             color: white;
             font-weight: bold;
         }
-
         .tab-content {
             display: none;
             opacity: 0;
             transition: opacity 0.5s ease;
         }
-
         .tab-content.active {
             display: block;
             opacity: 1;
         }
-
         table {
             width: 99%;
             border-collapse: collapse;
             margin: 20px auto;
-            table-layout: fixed;
+            table-layout: fixed; /* Mantém o layout fixo */
         }
-
         th, td {
             padding: 8px;
             text-align: center;
             border: 1px solid #ddd;
-            white-space: nowrap;
+            white-space: normal; /* Permite que o texto quebre em várias linhas */
+            word-wrap: break-word; /* Quebra o texto se for muito longo */
+            word-break: break-word; /* Quebra o texto se for muito longo */
             overflow: hidden;
             text-overflow: ellipsis;
+            height: 25px; /* Define a altura fixa das linhas */
         }
-
+        
         tr:first-child {
             background-color: #0b1b44;
             color: white;
             font-weight: bold;
         }
-
         tr:nth-child(even) {
             background-color: #f9f9f9;
         }
-
-        #timer {
-            display: none;
+        .clock {
+            position: absolute;
+            top: 160px; /* Ajuste para evitar sobreposição com os botões */
+            left: 5%;
+            transform: translateX(-50%);
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+            display: flex;
+            align-items: center; /* Alinha o conteúdo verticalmente */
+            justify-content: left;
+            gap: 10px;
         }
+        .clock-icon {
+            width: 30px;
+            height: 30px;
+            fill: #333;
+            transform: translateY(-2px); /* Move o ícone um pouco para cima */
+        }
+        .clock-text {
+            display: flex;
+            align-items: center;
+        }
+        /* Estilos para as condicionais */
+        .ok {
+            background-color: green;
+            color: white;
+        }
+        .em-processo {
+            background-color: rgb(237, 237, 57);
+            color: black;
+        }
+        .postergada {
+            background-color: darkred;
+            color: white;
+        }
+        .cancelada {
+            background-color: rgb(61, 56, 56);
+            color: white;
+        }
+       /* Estilo da animação de carregamento */
+.loading-spinner {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 2s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
     </style>
-    <!-- Script permanece o mesmo -->
     <script>
-        // Todo o JavaScript permanece igual
         let lastDataPA = null;
         let lastDataFabrica = null;
         let countdown = 15;
         let currentTab = "embarquesPA";
         let timerActive = false;
         let timerInterval = null;
-
+        let loadingOverlay = null;
         function formatDate(dateString) {
             if (!dateString.includes('T')) return dateString;
-
             const date = new Date(dateString);
             const day = date.getDate().toString().padStart(2, '0');
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
             const year = date.getFullYear().toString().slice(-2);
             return `${day}/${month}/${year}`;
         }
-
         function isToday(dateString) {
             if (!dateString.includes('T')) return false;
-
             const date = new Date(dateString);
             const today = new Date();
             return date.getDate() === today.getDate() &&
                 date.getMonth() === today.getMonth() &&
                 date.getFullYear() === today.getFullYear();
         }
-
         function shouldShowRow(row, headerRow) {
             if (isToday(row[0])) return true;
-
-            const liberacaoIndex = headerRow.findIndex(header => header.includes("HORA DE LIBERAÇÃO"));
+            const liberacaoIndex = headerRow.findIndex(header => header.includes("HR DE LIBERAÇÃO"));
             if (liberacaoIndex === -1) return false;
-
             return !row[liberacaoIndex] || row[liberacaoIndex].trim() === '';
         }
-
         function areArraysEqual(arr1, arr2) {
             if (!arr1 || !arr2) return false;
             return JSON.stringify(arr1) === JSON.stringify(arr2);
         }
-
+        function applyConditionalFormatting(td, text) {
+            switch (text.toUpperCase()) {
+                case 'OK':
+                    td.classList.add('ok');
+                    break;
+                case 'EM PROCESSO':
+                    td.classList.add('em-processo');
+                    break;
+                case 'POSTERGADA':
+                    td.classList.add('postergada');
+                    break;
+                case 'CANCELADA':
+                    td.classList.add('cancelada');
+                    break;
+                default:
+                    break;
+            }
+        }
         function updateTable(tableId, newData, lastData) {
             if (areArraysEqual(newData, lastData)) {
                 return lastData;
             }
-
             const table = document.getElementById(tableId);
             table.innerHTML = '';
-
             if (newData.length === 0) return lastData;
-
             let headerRow = document.createElement("tr");
             newData[0].forEach(cell => {
                 let td = document.createElement("td");
@@ -201,83 +254,107 @@
                 headerRow.appendChild(td);
             });
             table.appendChild(headerRow);
-
             newData.slice(1).forEach(row => {
                 if (shouldShowRow(row, newData[0])) {
                     let tr = document.createElement("tr");
                     row.forEach((cell, index) => {
                         let td = document.createElement("td");
                         td.innerText = index === 0 ? formatDate(cell) : cell || '';
+                        applyConditionalFormatting(td, cell || '');
                         tr.appendChild(td);
                     });
                     table.appendChild(tr);
                 }
             });
-
             return newData;
         }
-
         function fetchData() {
             fetch('https://script.google.com/macros/s/AKfycbyT7wTm2r9jGnyXi9GzbZTlefMZTh3lz9TIJU8cbczskRZJMjLkS_zw8zFd4hH-3AR0/exec')
                 .then(response => response.json())
                 .then(data => {
                     lastDataPA = updateTable("tablePA", data.EMBARQUES_PA, lastDataPA);
                     lastDataFabrica = updateTable("tableFabrica", data.EMBARQUES_FABRICA, lastDataFabrica);
+                    hideLoadingOverlay();
                 })
-                .catch(error => console.error('Erro ao carregar os dados: ', error));
+                .catch(error => {
+                    console.error('Erro ao carregar os dados: ', error);
+                    hideLoadingOverlay();
+                });
         }
-
         function showTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-
             document.querySelectorAll('.tab-button').forEach(button => {
                 button.classList.remove('active');
             });
-
             document.getElementById(tabName).classList.add('active');
             document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
             currentTab = tabName;
         }
-
         function autoSwitchTabs() {
             currentTab = currentTab === "embarquesPA" ? "embarquesFabrica" : "embarquesPA";
             showTab(currentTab);
         }
-
         function toggleTimer() {
             timerActive = !timerActive;
             const button = document.querySelector('.toggle-timer');
             button.classList.toggle('active', timerActive);
             button.innerText = timerActive ? "Desativar Alternância Automática" : "Ativar Alternância Automática";
-
             if (timerActive) {
-                timerInterval = setInterval(autoSwitchTabs, 10000);
+                timerInterval = setInterval(autoSwitchTabs, 10000); // alternancia dos dados a cada 10 segundos
             } else {
                 clearInterval(timerInterval);
             }
         }
-
+        function showLoadingOverlay() {
+            loadingOverlay = document.createElement('div');
+            loadingOverlay.className = 'loading-overlay';
+            const spinner = document.createElement('div');
+            spinner.className = 'loading-spinner';
+            loadingOverlay.appendChild(spinner);
+            document.body.appendChild(loadingOverlay);
+        }
+        function hideLoadingOverlay() {
+            if (loadingOverlay) {
+                document.body.removeChild(loadingOverlay);
+                loadingOverlay = null;
+            }
+        }
         window.onload = function () {
+            showLoadingOverlay();
             fetchData();
-            showTab('embarquesPA');
-            setInterval(fetchData, 5000);
+            setInterval(fetchData, 5000); // Atualiza os dados a cada 5 segundos
+            showTab(currentTab);
+            toggleTimer(); // Ativa a alternância automática ao carregar a página
         };
+        function updateClock() {
+            const clockElement = document.getElementById("digital-clock");
+            const date = new Date();
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            const seconds = date.getSeconds().toString().padStart(2, '0');
+            clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        setInterval(updateClock, 1000);
     </script>
 </head>
 <body>
     <div class="header-container">
         <h1>Tracking Board Outbound</h1>
-        <img src="LogoCEVA.jpg" alt="CEVA Logo" class="logo">
+        <img src="logo.png" class="logo" alt="Logo">
     </div>
-    <div id="timer">Próxima atualização em: 5s</div>
     <div class="tab-buttons">
-        <button class="tab-button active" onclick="showTab('embarquesPA')">EMBARQUES PA</button>
-        <button class="tab-button" onclick="showTab('embarquesFabrica')">EMBARQUES FÁBRICA</button>
-        <button class="toggle-timer" onclick="toggleTimer()">Ativar mudança de aba</button>
+        <button class="tab-button active" onclick="showTab('embarquesPA')">Embarques PA</button>
+        <button class="tab-button" onclick="showTab('embarquesFabrica')">Embarques Fabrica</button>
+        <button class="toggle-timer active" onclick="toggleTimer()">Desativar Alternância Automática</button>
     </div>
-    <div id="embarquesPA" class="tab-content">
+    <!-- Relógio abaixo do retângulo azul, acima da tabela -->
+    <div class="clock">
+        <svg class="clock-icon" viewBox="0 0 24 24"><path d="M12 4V12L15 15M19 12C19 17.8 15.8 22 12 22C8.2 22 5 17.8 5 12C5 6.2 8.2 2 12 2C15.8 2 19 6.2 19 12ZM12 0C5.4 0 0 5.4 0 12C0 18.6 5.4 24 12 24C18.6 24 24 18.6 24 12C24 5.4 18.6 0 12 0Z"></path></svg>
+        <span id="digital-clock">00:00:00</span>
+    </div>
+    <div id="embarquesPA" class="tab-content active">
         <table id="tablePA"></table>
     </div>
     <div id="embarquesFabrica" class="tab-content">
