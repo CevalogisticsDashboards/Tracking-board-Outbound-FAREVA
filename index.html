@@ -14,9 +14,10 @@
         /* Container para o título e logo */
         .header-container {
             background-color: #0b1b44;
-            padding: 30px;
+            padding: 50px 30px; /* Aumentei o tamanho vertical */
             position: relative;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
         }
@@ -36,6 +37,13 @@
             margin: 0;
             color: white;
             text-shadow: 4px 4px 8px rgba(0, 0, 139, 0.6), 0 0 10px rgba(0, 0, 139, 0.4);
+        }
+        .info-container {
+            margin-top: 10px;
+            color: white;
+            font-size: 1.2em;
+            display: flex;
+            gap: 10px;
         }
         .tab-buttons {
             margin-top: 20px;
@@ -124,7 +132,7 @@
         }
         .clock {
             position: absolute;
-            top: 160px; /* Ajuste para evitar sobreposição com os botões */
+            top: 225px; /* Ajuste para evitar sobreposição com os botões */
             left: 5%;
             transform: translateX(-50%);
             font-size: 2.5em;
@@ -201,7 +209,7 @@
             const date = new Date(dateString);
             const day = date.getDate().toString().padStart(2, '0');
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const year = date.getFullYear().toString().slice(-2);
+            const year = date.getFullYear().toString();
             return `${day}/${month}/${year}`;
         }
         function isToday(dateString) {
@@ -266,6 +274,7 @@
                     table.appendChild(tr);
                 }
             });
+            updateInfo(tableId, newData);
             return newData;
         }
         function fetchData() {
@@ -291,6 +300,7 @@
             document.getElementById(tabName).classList.add('active');
             document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
             currentTab = tabName;
+            updateInfo(tabName === 'embarquesPA' ? 'tablePA' : 'tableFabrica', currentTab === 'embarquesPA' ? lastDataPA : lastDataFabrica);
         }
         function autoSwitchTabs() {
             currentTab = currentTab === "embarquesPA" ? "embarquesFabrica" : "embarquesPA";
@@ -302,7 +312,7 @@
             button.classList.toggle('active', timerActive);
             button.innerText = timerActive ? "Desativar Alternância Automática" : "Ativar Alternância Automática";
             if (timerActive) {
-                timerInterval = setInterval(autoSwitchTabs, 10000); // alternancia dos dados a cada 10 segundos
+                timerInterval = setInterval(autoSwitchTabs, 10000); // alternancia das abas a cada 10 segundos
             } else {
                 clearInterval(timerInterval);
             }
@@ -321,13 +331,6 @@
                 loadingOverlay = null;
             }
         }
-        window.onload = function () {
-            showLoadingOverlay();
-            fetchData();
-            setInterval(fetchData, 5000); // Atualiza os dados a cada 5 segundos
-            showTab(currentTab);
-            toggleTimer(); // Ativa a alternância automática ao carregar a página
-        };
         function updateClock() {
             const clockElement = document.getElementById("digital-clock");
             const date = new Date();
@@ -337,11 +340,40 @@
             clockElement.textContent = `${hours}:${minutes}:${seconds}`;
         }
         setInterval(updateClock, 1000);
+        function updateInfo(tableId, data) {
+            if (!data || data.length === 0) return;
+            const headerRow = data[0];
+            const rows = data.slice(1).filter(row => shouldShowRow(row, headerRow));
+            const plannedLoads = rows.length;
+            const completedPicking = rows.filter(row => row[headerRow.indexOf('PICKING')] === 'OK').length;
+            const loadsToShip = rows.filter(row => ['EM PROCESSO', 'POSTERGADA'].includes(row[headerRow.indexOf('CARREGAMENTO')])).length;
+            const totalPallets = rows.reduce((sum, row) => sum + (parseInt(row[headerRow.indexOf('PALLETS')]) || 0), 0);
+            const pendingPallets = rows.reduce((sum, row) => {
+                const pickingStatus = row[headerRow.indexOf('PICKING')];
+                return sum + ((pickingStatus === 'EM PROCESSO' || pickingStatus === '') ? (parseInt(row[headerRow.indexOf('PALLETS')]) || 0) : 0);
+            }, 0);
+            const infoContainer = document.querySelector('.info-container');
+            infoContainer.innerHTML = `
+                CARGAS PLANEJADAS: ${plannedLoads} |
+                CARGAS FINALIZADAS 'PICKING': ${completedPicking} |
+                CARGAS A EXPEDIR: ${loadsToShip} |
+                TOTAL DE PALLETS: ${totalPallets} |
+                PALLETS PENDENTES DE PICKING: ${pendingPallets}
+            `;
+        }
+        window.onload = function () {
+            showLoadingOverlay();
+            fetchData();
+            setInterval(fetchData, 5000); // Atualiza os dados a cada 5 segundos
+            showTab(currentTab);
+            toggleTimer(); // Ativa a alternância automática ao carregar a página
+        };
     </script>
 </head>
 <body>
     <div class="header-container">
         <h1>Tracking Board Outbound</h1>
+        <div class="info-container"></div>
         <img src="LogoCEVA.jpg" class="logo" alt="Logo">
     </div>
     <div class="tab-buttons">
