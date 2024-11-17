@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Tracking Board Outbound FAREVA</title>
+    <title>Tracking Board Outbound</title>
     <style>
         /* Estilo base do corpo da página */
         body {
@@ -39,11 +39,14 @@
             text-shadow: 4px 4px 8px rgba(0, 0, 139, 0.6), 0 0 10px rgba(0, 0, 139, 0.4);
         }
         .info-container {
-            margin-top: 10px;
-            color: white;
-            font-size: 1.2em;
-            display: flex;
-            gap: 10px;
+            margin-top: 30px;  /* Aumentado para mover mais para baixo */
+    color: white;
+    font-size: 1.5em;  /* Aumentado o tamanho da fonte */
+    display: flex;
+    justify-content: center;  /* Centraliza horizontalmente */
+    align-items: center;
+    font-weight: bold;  /* Adiciona o negrito */
+    padding: 0 20px;
         }
         .tab-buttons {
             margin-top: 20px;
@@ -77,6 +80,7 @@
         .toggle-timer {
             position: absolute;
             right: 10px;
+            top: -53px; /* Esta é a nova linha que move o botão para cima */
             padding: 5px 15px;
             font-size: 12px;
             background-color: white;
@@ -132,12 +136,12 @@
         }
         .clock {
             position: absolute;
-            top: 225px; /* Ajuste para evitar sobreposição com os botões */
+            top: 8px; /* Ajuste para evitar sobreposição com os botões */
             left: 5%;
             transform: translateX(-50%);
             font-size: 2.5em;
             font-weight: bold;
-            color: #333;
+            color: #ffffff;
             display: flex;
             align-items: center; /* Alinha o conteúdo verticalmente */
             justify-content: left;
@@ -146,7 +150,7 @@
         .clock-icon {
             width: 30px;
             height: 30px;
-            fill: #333;
+            fill: #ffffff;
             transform: translateY(-2px); /* Move o ícone um pouco para cima */
         }
         .clock-text {
@@ -195,6 +199,46 @@
     align-items: center;
     z-index: 9999;
 }
+
+
+/* Media query para telas estreitas */
+@media screen and (max-width: 768px) {
+    .clock {
+        display: none !important;
+    }
+    
+    .clock-icon {
+        display: none !important;
+    }
+    
+    .logo {
+        display: none !important;
+    }
+    .clock, .clock-icon, .logo {
+    transition: opacity 0.3s ease-in-out;
+}
+
+}
+
+.info-container {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+
+.info-item {
+    white-space: nowrap;
+    font-size: 30px;  /* tamanho da fonte do texto */
+}
+
+.value {
+    font-size: 30px;  /* tamanho da fonte dos números */
+    font-weight: bold;  /* deixa os números em negrito */
+    color: #c5cc00;  /* opcional: cor diferente para os números */
+}
+
     </style>
     <script>
         let lastDataPA = null;
@@ -310,9 +354,9 @@
             timerActive = !timerActive;
             const button = document.querySelector('.toggle-timer');
             button.classList.toggle('active', timerActive);
-            button.innerText = timerActive ? "Desativar Alternância Automática" : "Ativar Alternância Automática";
+            button.innerText = timerActive ? "Desativar Alternância" : "Ativar Alternância";
             if (timerActive) {
-                timerInterval = setInterval(autoSwitchTabs, 30000); // alternancia das abas a cada 30 segundos
+                timerInterval = setInterval(autoSwitchTabs, 10000); // alternancia das abas a cada 10 segundos
             } else {
                 clearInterval(timerInterval);
             }
@@ -354,11 +398,11 @@
             }, 0);
             const infoContainer = document.querySelector('.info-container');
             infoContainer.innerHTML = `
-                CARGAS PLANEJADAS: ${plannedLoads} |
-                CARGAS FINALIZADAS 'PICKING': ${completedPicking} |
-                CARGAS A EXPEDIR: ${loadsToShip} |
-                TOTAL DE PALLETS: ${totalPallets} |
-                PALLETS PENDENTES DE PICKING: ${pendingPallets}
+                <span class="info-item">CARGAS PLANEJADAS: <span class="value">${plannedLoads}</span></span>
+    <span class="info-item">CARGAS SEPARADAS: <span class="value">${completedPicking}</span></span>
+    <span class="info-item">CARGAS A EXPEDIR: <span class="value">${loadsToShip}</span></span>
+    <span class="info-item">TOTAL DE PALLETS: <span class="value">${totalPallets}</span></span>
+    <span class="info-item">PALLETS A SEPARAR: <span class="value">${pendingPallets}</span></span>
             `;
         }
         window.onload = function () {
@@ -379,7 +423,7 @@
     <div class="tab-buttons">
         <button class="tab-button active" onclick="showTab('embarquesPA')">Embarques PA</button>
         <button class="tab-button" onclick="showTab('embarquesFabrica')">Embarques Fabrica</button>
-        <button class="toggle-timer active" onclick="toggleTimer()">Desativar Alternância Automática</button>
+        <button class="toggle-timer active" onclick="toggleTimer()">Desativar Alternância</button>
     </div>
     <!-- Relógio abaixo do retângulo azul, acima da tabela -->
     <div class="clock">
