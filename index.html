@@ -356,7 +356,7 @@
             button.classList.toggle('active', timerActive);
             button.innerText = timerActive ? "Desativar Alternância" : "Ativar Alternância";
             if (timerActive) {
-                timerInterval = setInterval(autoSwitchTabs, 10000); // alternancia das abas a cada 10 segundos
+                timerInterval = setInterval(autoSwitchTabs, 30000); // alternancia das abas a cada 30 segundos
             } else {
                 clearInterval(timerInterval);
             }
