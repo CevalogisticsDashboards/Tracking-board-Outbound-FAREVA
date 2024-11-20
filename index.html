@@ -80,7 +80,7 @@
         .toggle-timer {
             position: absolute;
             right: 10px;
-            top: -53px; /* Esta é a nova linha que move o botão para cima */
+            top: -53px;
             padding: 5px 15px;
             font-size: 12px;
             background-color: white;
@@ -112,18 +112,18 @@
             width: 99%;
             border-collapse: collapse;
             margin: 20px auto;
-            table-layout: fixed; /* Mantém o layout fixo */
+            table-layout: fixed;
         }
         th, td {
             padding: 8px;
             text-align: center;
             border: 1px solid #ddd;
-            white-space: normal; /* Permite que o texto quebre em várias linhas */
-            word-wrap: break-word; /* Quebra o texto se for muito longo */
-            word-break: break-word; /* Quebra o texto se for muito longo */
+            white-space: normal;
+            word-wrap: break-word;
+            word-break: break-word;
             overflow: hidden;
             text-overflow: ellipsis;
-            height: 25px; /* Define a altura fixa das linhas */
+            height: 25px;
         }
         
         tr:first-child {
@@ -136,14 +136,14 @@
         }
         .clock {
             position: absolute;
-            top: 12px; /* Ajuste para evitar sobreposição com os botões */
+            top: 8px;
             left: 5%;
             transform: translateX(-50%);
             font-size: 2.5em;
             font-weight: bold;
             color: #ffffff;
             display: flex;
-            align-items: center; /* Alinha o conteúdo verticalmente */
+            align-items: center;
             justify-content: left;
             gap: 10px;
         }
@@ -151,7 +151,7 @@
             width: 30px;
             height: 30px;
             fill: #ffffff;
-            transform: translateY(-2px); /* Move o ícone um pouco para cima */
+            transform: translateY(-2px);
         }
         .clock-text {
             display: flex;
@@ -174,70 +174,62 @@
             background-color: rgb(61, 56, 56);
             color: white;
         }
-       /* Estilo da animação de carregamento */
-.loading-spinner {
-    border: 16px solid #f3f3f3;
-    border-top: 16px solid #3498db;
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    animation: spin 2s linear infinite;
-}
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-
-
-/* Media query para telas estreitas */
-@media screen and (max-width: 768px) {
-    .clock {
-        display: none !important;
-    }
-    
-    .clock-icon {
-        display: none !important;
-    }
-    
-    .logo {
-        display: none !important;
-    }
-    .clock, .clock-icon, .logo {
-    transition: opacity 0.3s ease-in-out;
-}
-
-}
-
-.info-container {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-    flex-wrap: wrap;
-    padding: 10px;
-}
-
-.info-item {
-    white-space: nowrap;
-    font-size: 30px;  /* tamanho da fonte do texto */
-}
-
-.value {
-    font-size: 30px;  /* tamanho da fonte dos números */
-    font-weight: bold;  /* deixa os números em negrito */
-    color: #c5cc00;  /* opcional: cor diferente para os números */
-}
+        .loading-spinner {
+            border: 16px solid #f3f3f3;
+            border-top: 16px solid #3498db;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            animation: spin 2s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        @media screen and (max-width: 960px) {
+            .clock {
+                display: none !important;
+            }
+            
+            .clock-icon {
+                display: none !important;
+            }
+            
+            .logo {
+                display: none !important;
+            }
+            .clock, .clock-icon, .logo {
+                transition: opacity 0.3s ease-in-out;
+            }
+        }
+        .info-container {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 10px;
+        }
+        .info-item {
+            white-space: nowrap;
+            font-size: 30px;
+        }
+        .value {
+            font-size: 30px;
+            font-weight: bold;
+            color: #c5cc00;
+        }
 
     </style>
     <script>
@@ -248,6 +240,7 @@
         let timerActive = false;
         let timerInterval = null;
         let loadingOverlay = null;
+
         function formatDate(dateString) {
             if (!dateString.includes('T')) return dateString;
             const date = new Date(dateString);
@@ -256,6 +249,15 @@
             const year = date.getFullYear().toString();
             return `${day}/${month}/${year}`;
         }
+
+        function formatTime(dateString) {
+            if (!dateString || !dateString.includes('T')) return dateString;
+            const date = new Date(dateString);
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
         function isToday(dateString) {
             if (!dateString.includes('T')) return false;
             const date = new Date(dateString);
@@ -264,16 +266,19 @@
                 date.getMonth() === today.getMonth() &&
                 date.getFullYear() === today.getFullYear();
         }
+
         function shouldShowRow(row, headerRow) {
             if (isToday(row[0])) return true;
             const liberacaoIndex = headerRow.findIndex(header => header.includes("HR DE LIBERAÇÃO"));
             if (liberacaoIndex === -1) return false;
             return !row[liberacaoIndex] || row[liberacaoIndex].trim() === '';
         }
+
         function areArraysEqual(arr1, arr2) {
             if (!arr1 || !arr2) return false;
             return JSON.stringify(arr1) === JSON.stringify(arr2);
         }
+
         function applyConditionalFormatting(td, text) {
             switch (text.toUpperCase()) {
                 case 'OK':
@@ -292,6 +297,7 @@
                     break;
             }
         }
+
         function updateTable(tableId, newData, lastData) {
             if (areArraysEqual(newData, lastData)) {
                 return lastData;
@@ -299,6 +305,7 @@
             const table = document.getElementById(tableId);
             table.innerHTML = '';
             if (newData.length === 0) return lastData;
+
             let headerRow = document.createElement("tr");
             newData[0].forEach(cell => {
                 let td = document.createElement("td");
@@ -306,12 +313,18 @@
                 headerRow.appendChild(td);
             });
             table.appendChild(headerRow);
+
             newData.slice(1).forEach(row => {
                 if (shouldShowRow(row, newData[0])) {
                     let tr = document.createElement("tr");
                     row.forEach((cell, index) => {
                         let td = document.createElement("td");
-                        td.innerText = index === 0 ? formatDate(cell) : cell || '';
+                        // Verifica se a célula contém uma data ISO
+                        if (cell && cell.includes('1899-12-') && index > 0) {
+                            td.innerText = formatTime(cell);
+                        } else {
+                            td.innerText = index === 0 ? formatDate(cell) : cell || '';
+                        }
                         applyConditionalFormatting(td, cell || '');
                         tr.appendChild(td);
                     });
@@ -321,6 +334,7 @@
             updateInfo(tableId, newData);
             return newData;
         }
+
         function fetchData() {
             fetch('https://script.google.com/macros/s/AKfycbyT7wTm2r9jGnyXi9GzbZTlefMZTh3lz9TIJU8cbczskRZJMjLkS_zw8zFd4hH-3AR0/exec')
                 .then(response => response.json())
@@ -334,6 +348,7 @@
                     hideLoadingOverlay();
                 });
         }
+
         function showTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -346,21 +361,24 @@
             currentTab = tabName;
             updateInfo(tabName === 'embarquesPA' ? 'tablePA' : 'tableFabrica', currentTab === 'embarquesPA' ? lastDataPA : lastDataFabrica);
         }
+
         function autoSwitchTabs() {
             currentTab = currentTab === "embarquesPA" ? "embarquesFabrica" : "embarquesPA";
             showTab(currentTab);
         }
+
         function toggleTimer() {
             timerActive = !timerActive;
             const button = document.querySelector('.toggle-timer');
             button.classList.toggle('active', timerActive);
             button.innerText = timerActive ? "Desativar Alternância" : "Ativar Alternância";
             if (timerActive) {
-                timerInterval = setInterval(autoSwitchTabs, 30000); // alternancia das abas a cada 30 segundos
+                timerInterval = setInterval(autoSwitchTabs, 40000);
             } else {
                 clearInterval(timerInterval);
             }
         }
+
         function showLoadingOverlay() {
             loadingOverlay = document.createElement('div');
             loadingOverlay.className = 'loading-overlay';
@@ -369,12 +387,14 @@
             loadingOverlay.appendChild(spinner);
             document.body.appendChild(loadingOverlay);
         }
+
         function hideLoadingOverlay() {
             if (loadingOverlay) {
                 document.body.removeChild(loadingOverlay);
                 loadingOverlay = null;
             }
         }
+
         function updateClock() {
             const clockElement = document.getElementById("digital-clock");
             const date = new Date();
@@ -383,7 +403,9 @@
             const seconds = date.getSeconds().toString().padStart(2, '0');
             clockElement.textContent = `${hours}:${minutes}:${seconds}`;
         }
+
         setInterval(updateClock, 1000);
+
         function updateInfo(tableId, data) {
             if (!data || data.length === 0) return;
             const headerRow = data[0];
@@ -399,18 +421,19 @@
             const infoContainer = document.querySelector('.info-container');
             infoContainer.innerHTML = `
                 <span class="info-item">CARGAS PLANEJADAS: <span class="value">${plannedLoads}</span></span>
-    <span class="info-item">CARGAS SEPARADAS: <span class="value">${completedPicking}</span></span>
-    <span class="info-item">CARGAS A EXPEDIR: <span class="value">${loadsToShip}</span></span>
-    <span class="info-item">TOTAL DE PALLETS: <span class="value">${totalPallets}</span></span>
-    <span class="info-item">PALLETS A SEPARAR: <span class="value">${pendingPallets}</span></span>
+                <span class="info-item">CARGAS SEPARADAS: <span class="value">${completedPicking}</span></span>
+                <span class="info-item">CARGAS A EXPEDIR: <span class="value">${loadsToShip}</span></span>
+                <span class="info-item">TOTAL DE PALLETS: <span class="value">${totalPallets}</span></span>
+                <span class="info-item">PALLETS A SEPARAR: <span class="value">${pendingPallets}</span></span>
             `;
         }
+
         window.onload = function () {
             showLoadingOverlay();
             fetchData();
-            setInterval(fetchData, 5000); // Atualiza os dados a cada 5 segundos
+            setInterval(fetchData, 5000);
             showTab(currentTab);
-            toggleTimer(); // Ativa a alternância automática ao carregar a página
+            toggleTimer();
         };
     </script>
 </head>
@@ -425,7 +448,6 @@
         <button class="tab-button" onclick="showTab('embarquesFabrica')">Embarques Fabrica</button>
         <button class="toggle-timer active" onclick="toggleTimer()">Desativar Alternância</button>
     </div>
-    <!-- Relógio abaixo do retângulo azul, acima da tabela -->
     <div class="clock">
         <svg class="clock-icon" viewBox="0 0 24 24"><path d="M12 4V12L15 15M19 12C19 17.8 15.8 22 12 22C8.2 22 5 17.8 5 12C5 6.2 8.2 2 12 2C15.8 2 19 6.2 19 12ZM12 0C5.4 0 0 5.4 0 12C0 18.6 5.4 24 12 24C18.6 24 24 18.6 24 12C24 5.4 18.6 0 12 0Z"></path></svg>
         <span id="digital-clock">00:00:00</span>
