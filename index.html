@@ -40,13 +40,13 @@
         }
         .info-container {
             margin-top: 30px;  /* Aumentado para mover mais para baixo */
-    color: white;
-    font-size: 1.5em;  /* Aumentado o tamanho da fonte */
-    display: flex;
-    justify-content: center;  /* Centraliza horizontalmente */
-    align-items: center;
-    font-weight: bold;  /* Adiciona o negrito */
-    padding: 0 20px;
+            color: white;
+            font-size: 1.5em;  /* Aumentado o tamanho da fonte */
+            display: flex;
+            justify-content: center;  /* Centraliza horizontalmente */
+            align-items: center;
+            font-weight: bold;  /* Adiciona o negrito */
+            padding: 0 20px;
         }
         .tab-buttons {
             margin-top: 20px;
@@ -230,14 +230,13 @@
             font-weight: bold;
             color: #c5cc00;
         }
-
     </style>
     <script>
         let lastDataPA = null;
         let lastDataFabrica = null;
         let countdown = 15;
         let currentTab = "embarquesPA";
-        let timerActive = false;
+        let timerActive = true;
         let timerInterval = null;
         let loadingOverlay = null;
 
@@ -280,74 +279,110 @@
         }
 
         function applyConditionalFormatting(td, text) {
-            switch (text.toUpperCase()) {
-                case 'OK':
-                    td.classList.add('ok');
-                    break;
-                case 'EM PROCESSO':
-                    td.classList.add('em-processo');
-                    break;
-                case 'POSTERGADA':
-                    td.classList.add('postergada');
-                    break;
-                case 'CANCELADA':
-                    td.classList.add('cancelada');
-                    break;
-                default:
-                    break;
+            td.classList.remove('ok', 'em-processo', 'postergada', 'cancelada');
+
+            if (text.toUpperCase() === 'ATRASADO') {
+                td.classList.add('postergada');
+            } else if (text.toUpperCase() === 'NO PRAZO') {
+                td.classList.add('ok');
+            } else {
+                switch (text.toUpperCase()) {
+                    case 'OK':
+                        td.classList.add('ok');
+                        break;
+                    case 'EM PROCESSO':
+                        td.classList.add('em-processo');
+                        break;
+                    case 'POSTERGADA':
+                        td.classList.add('postergada');
+                        break;
+                    case 'CANCELADA':
+                        td.classList.add('cancelada');
+                        break;
+                }
             }
         }
 
         function updateTable(tableId, newData, lastData) {
-            if (areArraysEqual(newData, lastData)) {
-                return lastData;
-            }
-            const table = document.getElementById(tableId);
-            table.innerHTML = '';
-            if (newData.length === 0) return lastData;
-
-            let headerRow = document.createElement("tr");
-            newData[0].forEach(cell => {
+    if (areArraysEqual(newData, lastData)) {
+        return lastData;
+    }
+    const table = document.getElementById(tableId);
+    table.innerHTML = '';
+    if (newData.length === 0) return lastData;
+    let headerRow = document.createElement("tr");
+    newData[0].forEach(cell => {
+        let td = document.createElement("td");
+        td.innerText = cell;
+        headerRow.appendChild(td);
+    });
+    table.appendChild(headerRow);
+    newData.slice(1).forEach(row => {
+        if (shouldShowRow(row, newData[0])) {
+            let tr = document.createElement("tr");
+            row.forEach((cell, index) => {
                 let td = document.createElement("td");
-                td.innerText = cell;
-                headerRow.appendChild(td);
-            });
-            table.appendChild(headerRow);
-
-            newData.slice(1).forEach(row => {
-                if (shouldShowRow(row, newData[0])) {
-                    let tr = document.createElement("tr");
-                    row.forEach((cell, index) => {
-                        let td = document.createElement("td");
-                        // Verifica se a célula contém uma data ISO
-                        if (cell && cell.includes('1899-12-') && index > 0) {
-                            td.innerText = formatTime(cell);
-                        } else {
-                            td.innerText = index === 0 ? formatDate(cell) : cell || '';
-                        }
-                        applyConditionalFormatting(td, cell || '');
-                        tr.appendChild(td);
-                    });
-                    table.appendChild(tr);
+                if (cell && cell.includes('1899-12-') && index > 0) {
+                    td.innerText = formatTime(cell);
+                } else {
+                    td.innerText = index === 0 ? formatDate(cell) : 
+                                   index === row.length - 1 ? cell : 
+                                   cell || '';
                 }
+                applyConditionalFormatting(td, cell || '');
+                tr.appendChild(td);
             });
-            updateInfo(tableId, newData);
-            return newData;
+            table.appendChild(tr);
         }
+    });
+    updateInfo(tableId, newData);
+    return newData;
+}
 
         function fetchData() {
-            fetch('https://script.google.com/macros/s/AKfycbyT7wTm2r9jGnyXi9GzbZTlefMZTh3lz9TIJU8cbczskRZJMjLkS_zw8zFd4hH-3AR0/exec')
-                .then(response => response.json())
-                .then(data => {
-                    lastDataPA = updateTable("tablePA", data.EMBARQUES_PA, lastDataPA);
-                    lastDataFabrica = updateTable("tableFabrica", data.EMBARQUES_FABRICA, lastDataFabrica);
-                    hideLoadingOverlay();
-                })
-                .catch(error => {
-                    console.error('Erro ao carregar os dados: ', error);
-                    hideLoadingOverlay();
-                });
-        }
+    fetch('https://script.google.com/macros/s/AKfycbyT7wTm2r9jGnyXi9GzbZTlefMZTh3lz9TIJU8cbczskRZJMjLkS_zw8zFd4hH-3AR0/exec')
+        .then(response => response.json())
+        .then(data => {
+            data.EMBARQUES_PA[0].push("Hora atual", "Data Chegada Doca", "Status");
+            data.EMBARQUES_FABRICA[0].push("Hora atual", "Data Chegada Doca", "Status");
+            const formatDateTime = () => {
+                const now = new Date();
+                const dia = now.getDate().toString().padStart(2, '0');
+                const mes = (now.getMonth() + 1).toString().padStart(2, '0');
+                const ano = now.getFullYear();
+                const horas = now.getHours().toString().padStart(2, '0');
+                const minutos = now.getMinutes().toString().padStart(2, '0');
+                return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
+            };
+            data.EMBARQUES_PA = data.EMBARQUES_PA.map(row => {
+                if (row !== data.EMBARQUES_PA[0]) {
+                    const dataIndex = data.EMBARQUES_PA[0].indexOf("DATA");
+                    const horaIndex = data.EMBARQUES_PA[0].indexOf("**HR CHEGADA DOCA**");
+                    const dataChegadaDoca = row[dataIndex] && row[horaIndex] ? `${row[dataIndex]} ${row[horaIndex]}` : '';
+                    row.push(formatDateTime(), dataChegadaDoca, "");
+                }
+                return row;
+            });
+            data.EMBARQUES_FABRICA = data.EMBARQUES_FABRICA.map(row => {
+                if (row !== data.EMBARQUES_FABRICA[0]) {
+                    const dataIndex = data.EMBARQUES_FABRICA[0].indexOf("DATA");
+                    const horaIndex = data.EMBARQUES_FABRICA[0].indexOf("**HR CHEGADA DOCA**");
+                    const dataChegadaDoca = row[dataIndex] && row[horaIndex] ? `${row[dataIndex]} ${row[horaIndex]}` : '';
+                    row.push(formatDateTime(), dataChegadaDoca, "");
+                }
+                return row;
+            });
+            lastDataPA = updateTable("tablePA", data.EMBARQUES_PA, lastDataPA);
+            lastDataFabrica = updateTable("tableFabrica", data.EMBARQUES_FABRICA, lastDataFabrica);
+            
+            showTab(currentTab);
+            hideLoadingOverlay();
+        })
+        .catch(error => {
+            console.error('Erro ao carregar os dados: ', error);
+            hideLoadingOverlay();
+        });
+}
 
         function showTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
@@ -373,8 +408,7 @@
             button.classList.toggle('active', timerActive);
             button.innerText = timerActive ? "Desativar Alternância" : "Ativar Alternância";
             if (timerActive) {
-                timerInterval = setInterval(autoSwitchTabs, 40000);
-            } else {
+                timerInterval = setInterval(autoSwitchTabs, 10000);} else {
                 clearInterval(timerInterval);
             }
         }
@@ -404,8 +438,6 @@
             clockElement.textContent = `${hours}:${minutes}:${seconds}`;
         }
 
-        setInterval(updateClock, 1000);
-
         function updateInfo(tableId, data) {
             if (!data || data.length === 0) return;
             const headerRow = data[0];
@@ -429,12 +461,14 @@
         }
 
         window.onload = function () {
-            showLoadingOverlay();
-            fetchData();
-            setInterval(fetchData, 5000);
-            showTab(currentTab);
-            toggleTimer();
-        };
+    showLoadingOverlay();
+    fetchData();
+    setInterval(fetchData, 5000);
+    setInterval(updateClock, 1000);
+    
+    // Já inicia o timer ativo por padrão
+    timerInterval = setInterval(autoSwitchTabs, 10000);
+};
     </script>
 </head>
 <body>
