@@ -340,32 +340,32 @@
             const carregamentoIndex = newData[0].indexOf('CARREGAMENTO');
             
             // Add blinking effect for rows with "ATRASADO" status
-            if (row[statusIndex] === 'ATRASADO') {
+            if (row[statusIndex] === 'ATRASADO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(row[carregamentoIndex])) {
                 tr.classList.add('linha-atrasada');
             }
             
             row.forEach((cell, index) => {
-        let td = document.createElement("td");
-        
-        // Se for a coluna de CARREGAMENTO e o status for ATRASADO
-        if (index === carregamentoIndex && row[statusIndex] === 'ATRASADO') {
-            td.innerText = 'ATRASADO';
-            td.classList.add('carregamento-atrasado');
-        } else {
-            // Lógica original de formatação
-            if (cell && cell.includes('1899-12-') && index > 0) {
-                td.innerText = formatTime(cell);
-            } else {
-                td.innerText = index === 0 ? formatDate(cell) : 
-                               index === row.length - 1 ? cell : 
-                               cell || '';
-            }
-            
-            applyConditionalFormatting(td, cell || '');
-        }
-        
-        tr.appendChild(td);
-    });
+                let td = document.createElement("td");
+                
+                // Se for a coluna de CARREGAMENTO e o status for ATRASADO
+                if (index === carregamentoIndex && row[statusIndex] === 'ATRASADO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
+                    td.innerText = 'ATRASADO';
+                    td.classList.add('carregamento-atrasado');
+                } else {
+                    // Lógica original de formatação
+                    if (cell && cell.includes('1899-12-') && index > 0) {
+                        td.innerText = formatTime(cell);
+                    } else {
+                        td.innerText = index === 0 ? formatDate(cell) : 
+                                       index === row.length - 1 ? cell : 
+                                       cell || '';
+                    }
+                    
+                    applyConditionalFormatting(td, cell || '');
+                }
+                
+                tr.appendChild(td);
+            });
             table.appendChild(tr);
         }
     });
@@ -482,7 +482,7 @@
             const rows = data.slice(1).filter(row => shouldShowRow(row, headerRow));
             const plannedLoads = rows.filter(row => row[headerRow.indexOf('PLANEJAMENTO')] === 'OK').length;
             const completedPicking = rows.filter(row => row[headerRow.indexOf('PICKING')] === 'OK').length;
-            const loadsToShip = rows.filter(row => ['EM PROCESSO', 'POSTERGADA', 'ATRASADO'].includes(row[headerRow.indexOf('CARREGAMENTO')])).length;
+            const loadsToShip = rows.filter(row => ['EM PROCESSO', 'ATRASADO'].includes(row[headerRow.indexOf('CARREGAMENTO')])).length;
             const totalPallets = rows.reduce((sum, row) => sum + (parseInt(row[headerRow.indexOf('PALLETS')]) || 0), 0);
             const pendingPallets = rows.reduce((sum, row) => {
                 const pickingStatus = row[headerRow.indexOf('PICKING')];
