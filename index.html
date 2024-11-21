@@ -239,7 +239,6 @@
         let timerActive = true;
         let timerInterval = null;
         let loadingOverlay = null;
-
         function formatDate(dateString) {
             if (!dateString.includes('T')) return dateString;
             const date = new Date(dateString);
@@ -248,15 +247,18 @@
             const year = date.getFullYear().toString();
             return `${day}/${month}/${year}`;
         }
-
-        function formatTime(dateString) {
-            if (!dateString || !dateString.includes('T')) return dateString;
-            const date = new Date(dateString);
-            const hours = date.getHours().toString().padStart(2, '0');
-            const minutes = date.getMinutes().toString().padStart(2, '0');
-            return `${hours}:${minutes}`;
+        function formatTime(timeString) {
+            if (!timeString) return '';
+            if (timeString.includes('T')) {
+                const date = new Date(timeString);
+                const localDate = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+                const hours = localDate.getHours().toString().padStart(2, '0');
+                const minutes = localDate.getMinutes().toString().padStart(2, '0');
+                return `${hours}:${minutes}`;
+            }
+            const [hours, minutes] = timeString.split(':');
+            return `${hours.padStart(2, '0')}:${minutes.padStart(2, '0')}`;
         }
-
         function isToday(dateString) {
             if (!dateString.includes('T')) return false;
             const date = new Date(dateString);
@@ -265,22 +267,18 @@
                 date.getMonth() === today.getMonth() &&
                 date.getFullYear() === today.getFullYear();
         }
-
         function shouldShowRow(row, headerRow) {
             if (isToday(row[0])) return true;
             const liberacaoIndex = headerRow.findIndex(header => header.includes("HR DE LIBERAÇÃO"));
             if (liberacaoIndex === -1) return false;
             return !row[liberacaoIndex] || row[liberacaoIndex].trim() === '';
         }
-
         function areArraysEqual(arr1, arr2) {
             if (!arr1 || !arr2) return false;
             return JSON.stringify(arr1) === JSON.stringify(arr2);
         }
-
         function applyConditionalFormatting(td, text) {
             td.classList.remove('ok', 'em-processo', 'postergada', 'cancelada');
-
             if (text.toUpperCase() === 'ATRASADO') {
                 td.classList.add('postergada');
             } else if (text.toUpperCase() === 'NO PRAZO') {
@@ -302,49 +300,46 @@
                 }
             }
         }
-
         function updateTable(tableId, newData, lastData) {
-    if (areArraysEqual(newData, lastData)) {
-        return lastData;
-    }
-    const table = document.getElementById(tableId);
-    table.innerHTML = '';
-    if (newData.length === 0) return lastData;
-    let headerRow = document.createElement("tr");
-    newData[0].forEach(cell => {
-        let td = document.createElement("td");
-        td.innerText = cell;
-        headerRow.appendChild(td);
-    });
-    table.appendChild(headerRow);
-    newData.slice(1).forEach(row => {
-        if (shouldShowRow(row, newData[0])) {
-            let tr = document.createElement("tr");
-            row.forEach((cell, index) => {
+            if (areArraysEqual(newData, lastData)) {
+                return lastData;
+            }
+            const table = document.getElementById(tableId);
+            table.innerHTML = '';
+            if (newData.length === 0) return lastData;
+            let headerRow = document.createElement("tr");
+            newData[0].forEach(cell => {
                 let td = document.createElement("td");
-                if (cell && cell.includes('1899-12-') && index > 0) {
-                    td.innerText = formatTime(cell);
-                } else {
-                    td.innerText = index === 0 ? formatDate(cell) : 
-                                   index === row.length - 1 ? cell : 
-                                   cell || '';
-                }
-                applyConditionalFormatting(td, cell || '');
-                tr.appendChild(td);
+                td.innerText = cell;
+                headerRow.appendChild(td);
             });
-            table.appendChild(tr);
+            table.appendChild(headerRow);
+            newData.slice(1).forEach(row => {
+                if (shouldShowRow(row, newData[0])) {
+                    let tr = document.createElement("tr");
+                    row.forEach((cell, index) => {
+                        let td = document.createElement("td");
+                        if (cell && cell.includes('1899-12-') && index > 0) {
+                            td.innerText = formatTime(cell);
+                        } else {
+                            td.innerText = index === 0 ? formatDate(cell) : 
+                                           index === row.length - 1 ? cell : 
+                                           cell || '';
+                        }
+                        applyConditionalFormatting(td, cell || '');
+                        tr.appendChild(td);
+                    });
+                    table.appendChild(tr);
+                }
+            });
+            updateInfo(tableId, newData);
+            return newData;
         }
-    });
-    updateInfo(tableId, newData);
-    return newData;
-}
-
         function fetchData() {
     fetch('https://script.google.com/macros/s/AKfycbyT7wTm2r9jGnyXi9GzbZTlefMZTh3lz9TIJU8cbczskRZJMjLkS_zw8zFd4hH-3AR0/exec')
         .then(response => response.json())
         .then(data => {
-            data.EMBARQUES_PA[0].push("Hora atual", "Data Chegada Doca", "Status");
-            data.EMBARQUES_FABRICA[0].push("Hora atual", "Data Chegada Doca", "Status");
+            data.EMBARQUES_PA[0].push("Hora atual", "Status");
             const formatDateTime = () => {
                 const now = new Date();
                 const dia = now.getDate().toString().padStart(2, '0');
@@ -354,27 +349,38 @@
                 const minutos = now.getMinutes().toString().padStart(2, '0');
                 return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
             };
-            data.EMBARQUES_PA = data.EMBARQUES_PA.map(row => {
-                if (row !== data.EMBARQUES_PA[0]) {
+            data.EMBARQUES_PA = data.EMBARQUES_PA.map((row, index) => {
+                if (index !== 0) {
                     const dataIndex = data.EMBARQUES_PA[0].indexOf("DATA");
-                    const horaIndex = data.EMBARQUES_PA[0].indexOf("**HR CHEGADA DOCA**");
-                    const dataChegadaDoca = row[dataIndex] && row[horaIndex] ? `${row[dataIndex]} ${row[horaIndex]}` : '';
-                    row.push(formatDateTime(), dataChegadaDoca, "");
-                }
-                return row;
-            });
-            data.EMBARQUES_FABRICA = data.EMBARQUES_FABRICA.map(row => {
-                if (row !== data.EMBARQUES_FABRICA[0]) {
-                    const dataIndex = data.EMBARQUES_FABRICA[0].indexOf("DATA");
-                    const horaIndex = data.EMBARQUES_FABRICA[0].indexOf("**HR CHEGADA DOCA**");
-                    const dataChegadaDoca = row[dataIndex] && row[horaIndex] ? `${row[dataIndex]} ${row[horaIndex]}` : '';
-                    row.push(formatDateTime(), dataChegadaDoca, "");
+                    const horaIndex = data.EMBARQUES_PA[0].indexOf("HR CHEGADA DOCA");
+                    
+                    // Formatação da data e hora de chegada
+                    const dataChegadaOriginal = row[dataIndex].trim();
+                    const horaChegadaOriginal = row[horaIndex].trim();
+                    
+                    // Parse a data de chegada como um objeto Date
+                    const dataChegadaParsed = new Date(dataChegadaOriginal);
+                    dataChegadaParsed.setHours(horaChegadaOriginal.split(":")[0]);
+                    dataChegadaParsed.setMinutes(horaChegadaOriginal.split(":")[1]);
+                    
+                    // Cálculo da diferença de tempo
+                    const horaAtual = new Date();
+                    const diferencaMinutos = (horaAtual.getTime() - dataChegadaParsed.getTime()) / (1000 * 60);
+                    
+                    // Lógica para status
+                    let status;
+                    if (diferencaMinutos > 120) { // 120 minutos = 2 horas
+                        status = "ATRASADO";
+                    } else {
+                        status = "NO PRAZO";
+                    }
+                    
+                    row.push(formatDateTime(), status);
                 }
                 return row;
             });
             lastDataPA = updateTable("tablePA", data.EMBARQUES_PA, lastDataPA);
             lastDataFabrica = updateTable("tableFabrica", data.EMBARQUES_FABRICA, lastDataFabrica);
-            
             showTab(currentTab);
             hideLoadingOverlay();
         })
@@ -383,7 +389,6 @@
             hideLoadingOverlay();
         });
 }
-
         function showTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
@@ -396,23 +401,21 @@
             currentTab = tabName;
             updateInfo(tabName === 'embarquesPA' ? 'tablePA' : 'tableFabrica', currentTab === 'embarquesPA' ? lastDataPA : lastDataFabrica);
         }
-
         function autoSwitchTabs() {
             currentTab = currentTab === "embarquesPA" ? "embarquesFabrica" : "embarquesPA";
             showTab(currentTab);
         }
-
         function toggleTimer() {
             timerActive = !timerActive;
             const button = document.querySelector('.toggle-timer');
             button.classList.toggle('active', timerActive);
             button.innerText = timerActive ? "Desativar Alternância" : "Ativar Alternância";
             if (timerActive) {
-                timerInterval = setInterval(autoSwitchTabs, 10000);} else {
+                timerInterval = setInterval(autoSwitchTabs, 40000);
+            } else {
                 clearInterval(timerInterval);
             }
         }
-
         function showLoadingOverlay() {
             loadingOverlay = document.createElement('div');
             loadingOverlay.className = 'loading-overlay';
@@ -421,14 +424,12 @@
             loadingOverlay.appendChild(spinner);
             document.body.appendChild(loadingOverlay);
         }
-
         function hideLoadingOverlay() {
             if (loadingOverlay) {
                 document.body.removeChild(loadingOverlay);
                 loadingOverlay = null;
             }
         }
-
         function updateClock() {
             const clockElement = document.getElementById("digital-clock");
             const date = new Date();
@@ -437,12 +438,11 @@
             const seconds = date.getSeconds().toString().padStart(2, '0');
             clockElement.textContent = `${hours}:${minutes}:${seconds}`;
         }
-
         function updateInfo(tableId, data) {
             if (!data || data.length === 0) return;
             const headerRow = data[0];
             const rows = data.slice(1).filter(row => shouldShowRow(row, headerRow));
-            const plannedLoads = rows.length;
+            const plannedLoads = rows.filter(row => row[headerRow.indexOf('PLANEJAMENTO')] === 'OK').length;
             const completedPicking = rows.filter(row => row[headerRow.indexOf('PICKING')] === 'OK').length;
             const loadsToShip = rows.filter(row => ['EM PROCESSO', 'POSTERGADA'].includes(row[headerRow.indexOf('CARREGAMENTO')])).length;
             const totalPallets = rows.reduce((sum, row) => sum + (parseInt(row[headerRow.indexOf('PALLETS')]) || 0), 0);
@@ -459,16 +459,15 @@
                 <span class="info-item">PALLETS A SEPARAR: <span class="value">${pendingPallets}</span></span>
             `;
         }
-
         window.onload = function () {
-    showLoadingOverlay();
-    fetchData();
-    setInterval(fetchData, 5000);
-    setInterval(updateClock, 1000);
-    
-    // Já inicia o timer ativo por padrão
-    timerInterval = setInterval(autoSwitchTabs, 10000);
-};
+            showLoadingOverlay();
+            fetchData();
+            setInterval(fetchData, 5000);
+            setInterval(updateClock, 1000);
+            
+            // Já inicia o timer ativo por padrão
+            timerInterval = setInterval(autoSwitchTabs, 40000);
+        };
     </script>
 </head>
 <body>
