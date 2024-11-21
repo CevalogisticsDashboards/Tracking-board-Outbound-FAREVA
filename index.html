@@ -158,6 +158,10 @@
             align-items: center;
         }
         /* Estilos para as condicionais */
+        @keyframes piscar {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
         .ok {
             background-color: green;
             color: white;
@@ -174,7 +178,16 @@
             background-color: rgb(61, 56, 56);
             color: white;
         }
-        .loading-spinner {
+        /* Novos estilos para linhas atrasadas */
+        .linha-atrasada {
+    animation: piscar 1s infinite;
+    background-color: #fba3a3 !important;  /* Light red with !important to override other background colors */
+}
+.carregamento-atrasado {
+    background-color: rgb(225, 38, 38) !important;
+    color: white !important;
+}
+            .loading-spinner {
             border: 16px solid #f3f3f3;
             border-top: 16px solid #3498db;
             border-radius: 50%;
@@ -230,6 +243,11 @@
             font-weight: bold;
             color: #c5cc00;
         }
+        /* Esconder últimas duas colunas */
+        table tr th:nth-last-child(-n+2),
+        table tr td:nth-last-child(-n+2) {
+            display: none;
+        }
     </style>
     <script>
         let lastDataPA = null;
@@ -278,63 +296,82 @@
             return JSON.stringify(arr1) === JSON.stringify(arr2);
         }
         function applyConditionalFormatting(td, text) {
-            td.classList.remove('ok', 'em-processo', 'postergada', 'cancelada');
-            if (text.toUpperCase() === 'ATRASADO') {
-                td.classList.add('postergada');
-            } else if (text.toUpperCase() === 'NO PRAZO') {
+    td.classList.remove('ok', 'em-processo', 'postergada', 'cancelada', 'carregamento-atrasado');
+    if (text.toUpperCase() === 'ATRASADO') {
+        td.classList.add('carregamento-atrasado');
+    } else if (text.toUpperCase() === 'NO PRAZO') {
+        td.classList.add('ok');
+    } else {
+        switch (text.toUpperCase()) {
+            case 'OK':
                 td.classList.add('ok');
-            } else {
-                switch (text.toUpperCase()) {
-                    case 'OK':
-                        td.classList.add('ok');
-                        break;
-                    case 'EM PROCESSO':
-                        td.classList.add('em-processo');
-                        break;
-                    case 'POSTERGADA':
-                        td.classList.add('postergada');
-                        break;
-                    case 'CANCELADA':
-                        td.classList.add('cancelada');
-                        break;
-                }
-            }
+                break;
+            case 'EM PROCESSO':
+                td.classList.add('em-processo');
+                break;
+            case 'POSTERGADA':
+                td.classList.add('postergada');
+                break;
+            case 'CANCELADA':
+                td.classList.add('cancelada');
+                break;
         }
+    }
+}
         function updateTable(tableId, newData, lastData) {
-            if (areArraysEqual(newData, lastData)) {
-                return lastData;
+    if (areArraysEqual(newData, lastData)) {
+        return lastData;
+    }
+    const table = document.getElementById(tableId);
+    table.innerHTML = '';
+    if (newData.length === 0) return lastData;
+    let headerRow = document.createElement("tr");
+    newData[0].forEach(cell => {
+        let td = document.createElement("td");
+        td.innerText = cell;
+        headerRow.appendChild(td);
+    });
+    table.appendChild(headerRow);
+    newData.slice(1).forEach(row => {
+        if (shouldShowRow(row, newData[0])) {
+            let tr = document.createElement("tr");
+            
+            const statusIndex = newData[0].indexOf('Status');
+            const carregamentoIndex = newData[0].indexOf('CARREGAMENTO');
+            
+            // Add blinking effect for rows with "ATRASADO" status
+            if (row[statusIndex] === 'ATRASADO') {
+                tr.classList.add('linha-atrasada');
             }
-            const table = document.getElementById(tableId);
-            table.innerHTML = '';
-            if (newData.length === 0) return lastData;
-            let headerRow = document.createElement("tr");
-            newData[0].forEach(cell => {
-                let td = document.createElement("td");
-                td.innerText = cell;
-                headerRow.appendChild(td);
-            });
-            table.appendChild(headerRow);
-            newData.slice(1).forEach(row => {
-                if (shouldShowRow(row, newData[0])) {
-                    let tr = document.createElement("tr");
-                    row.forEach((cell, index) => {
-                        let td = document.createElement("td");
-                        if (cell && cell.includes('1899-12-') && index > 0) {
-                            td.innerText = formatTime(cell);
-                        } else {
-                            td.innerText = index === 0 ? formatDate(cell) : 
-                                           index === row.length - 1 ? cell : 
-                                           cell || '';
-                        }
-                        applyConditionalFormatting(td, cell || '');
-                        tr.appendChild(td);
-                    });
-                    table.appendChild(tr);
-                }
-            });
-            updateInfo(tableId, newData);
-            return newData;
+            
+            row.forEach((cell, index) => {
+        let td = document.createElement("td");
+        
+        // Se for a coluna de CARREGAMENTO e o status for ATRASADO
+        if (index === carregamentoIndex && row[statusIndex] === 'ATRASADO') {
+            td.innerText = 'ATRASADO';
+            td.classList.add('carregamento-atrasado');
+        } else {
+            // Lógica original de formatação
+            if (cell && cell.includes('1899-12-') && index > 0) {
+                td.innerText = formatTime(cell);
+            } else {
+                td.innerText = index === 0 ? formatDate(cell) : 
+                               index === row.length - 1 ? cell : 
+                               cell || '';
+            }
+            
+            applyConditionalFormatting(td, cell || '');
         }
+        
+        tr.appendChild(td);
+    });
+            table.appendChild(tr);
+        }
+    });
+    updateInfo(tableId, newData);
+    return newData;
+}
         function fetchData() {
     fetch('https://script.google.com/macros/s/AKfycbyT7wTm2r9jGnyXi9GzbZTlefMZTh3lz9TIJU8cbczskRZJMjLkS_zw8zFd4hH-3AR0/exec')
         .then(response => response.json())
@@ -389,7 +426,8 @@
             hideLoadingOverlay();
         });
 }
-        function showTab(tabName) {
+
+         function showTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -444,7 +482,7 @@
             const rows = data.slice(1).filter(row => shouldShowRow(row, headerRow));
             const plannedLoads = rows.filter(row => row[headerRow.indexOf('PLANEJAMENTO')] === 'OK').length;
             const completedPicking = rows.filter(row => row[headerRow.indexOf('PICKING')] === 'OK').length;
-            const loadsToShip = rows.filter(row => ['EM PROCESSO', 'POSTERGADA'].includes(row[headerRow.indexOf('CARREGAMENTO')])).length;
+            const loadsToShip = rows.filter(row => ['EM PROCESSO', 'POSTERGADA', 'ATRASADO'].includes(row[headerRow.indexOf('CARREGAMENTO')])).length;
             const totalPallets = rows.reduce((sum, row) => sum + (parseInt(row[headerRow.indexOf('PALLETS')]) || 0), 0);
             const pendingPallets = rows.reduce((sum, row) => {
                 const pickingStatus = row[headerRow.indexOf('PICKING')];
