@@ -3,6 +3,10 @@
 <head>
     <title>Tracking Board Outbound</title>
     <style>
+
+                     /*_________________________________ INICIO CSS__________________________________________________  */
+
+
         /* Estilo base do corpo da página */
         body {
             font-family: Arial, sans-serif;
@@ -49,8 +53,8 @@
             padding: 0 20px;
         }
         .tab-buttons {
-            margin-top: 20px;
-            margin-bottom: 5px;
+            margin-top: 35px;
+            margin-bottom: 35px;
             text-align: center;
             display: flex;
             justify-content: center;
@@ -58,8 +62,8 @@
             position: relative;
         }
         .tab-button {
-            padding: 10px 100px;
-            font-size: 14px;
+            padding: 10px 150px;
+            font-size: 18px;
             background-color: white;
             color: #0b1b44;
             border: 2px solid #0b1b44;
@@ -80,7 +84,7 @@
         .toggle-timer {
             position: absolute;
             right: 10px;
-            top: -53px;
+            top: -75px;
             padding: 5px 15px;
             font-size: 12px;
             background-color: white;
@@ -157,6 +161,21 @@
             display: flex;
             align-items: center;
         }
+
+        /* Estilo base para as colunas CARGA e PALLETS */
+.coluna-azul-claro {
+    background-color: #e6f3ff !important; /* Azul bem claro */
+}
+
+/* Estilo para quando a linha estiver piscando */
+@keyframes piscar-vermelho-azul {
+    0%, 100% { background-color: #e6f3ff; }
+    50% { background-color: #ffcccc; }
+}
+
+.coluna-azul-claro-piscando {
+    animation: piscar-vermelho-azul 1s infinite;
+}
         /* Estilos para as condicionais */
         @keyframes piscar {
             0%, 100% { opacity: 1; }
@@ -232,6 +251,9 @@
             .logo {
                 display: none !important;
             }
+            .legenda {
+        display: none !important; /* Adicionado para esconder a legenda em telas pequenas */
+    }
             .clock, .clock-icon, .logo {
                 transition: opacity 0.3s ease-in-out;
             }
@@ -252,13 +274,53 @@
             font-weight: bold;
             color: #c5cc00;
         }
+
+        /* Estilo base para as colunas CARGA e PALLETS */
+.coluna-azul-claro {
+    background-color: #e6f3ff !important; /* Azul bem claro */
+}
+
+/* Estilo para quando a linha estiver piscando */
+@keyframes piscar-vermelho-azul {
+    0%, 100% { background-color: #e6f3ff; }
+    50% { background-color: #ffcccc; }
+}
+
+.coluna-azul-claro-piscando {
+    animation: piscar-vermelho-azul 1s infinite;
+}
+
         /* Esconder últimas 4 colunas apenas da tabela PA */
         #tablePA tr th:nth-last-child(-n+4),
         #tablePA tr td:nth-last-child(-n+4) {
         display: none;
         }
+
+        .legenda {
+    position: absolute; /* Voltamos para absolute */
+    margin-top: 360px; /* Espaço negativo para subir a legenda */
+    left: 0.8%;
+    font-size: 1em;
+    color: #000000;
+    white-space: pre-line;
+    text-align: left;
+    line-height: 1;
+    display: block;
+    z-index: 100;
+}
+        .legenda .vermelho {
+            color: red; /* Define a cor vermelha para as partes específicas */
+        }
+
+                  /*_________________________________________FIM DO CSS__________________________________________________  */
         </style>
+
+                           
+
+
+       
         <script>
+                  /*_________________________________ INICIO JAVASCRIPT__________________________________________________  */
         let lastDataPA = null;
         let lastDataFabrica = null;
         let countdown = 15;
@@ -334,6 +396,7 @@ function updateTable(tableId, newData, lastData) {
     const table = document.getElementById(tableId);
     table.innerHTML = '';
     if (newData.length === 0) return lastData;
+    
     let headerRow = document.createElement("tr");
     newData[0].forEach(cell => {
         let td = document.createElement("td");
@@ -341,6 +404,11 @@ function updateTable(tableId, newData, lastData) {
         headerRow.appendChild(td);
     });
     table.appendChild(headerRow);
+    
+    // Encontrar os índices das novas colunas
+    const cargaIndex = newData[0].indexOf('CARGA');
+    const palletsIndex = newData[0].indexOf('PALLETS');
+    
     newData.slice(1).forEach(row => {
         if (shouldShowRow(row, newData[0])) {
             let tr = document.createElement("tr");
@@ -369,6 +437,7 @@ function updateTable(tableId, newData, lastData) {
                 tr.classList.add('linha-plan-atraso');
                 linhaPlanAtraso = true;
             }
+            
             // Add blinking effect for rows with "ATRASO.JANELA"
             if (row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(row[carregamentoIndex])) {
                 tr.classList.add('linha-atrasado-janela');
@@ -378,53 +447,35 @@ function updateTable(tableId, newData, lastData) {
             row.forEach((cell, index) => {
                 let td = document.createElement("td");
                 
-                // Se for a coluna de CARREGAMENTO e o status for ATRASADO
+                // Adicionar fundo azul claro para CARGA e PALLETS (exceto no cabeçalho)
+                if ((index === cargaIndex || index === palletsIndex)) {
+                    if (linhaCarregamentoAtrasado || linhaPlanAtraso || linhaAtrasadoJanela) {
+                        td.classList.add('coluna-azul-claro-piscando');
+                    } else {
+                        td.classList.add('coluna-azul-claro');
+                    }
+                }
+                
+                // Resto da lógica original de formatação das células
                 if (index === carregamentoIndex && row[statusIndex] === 'ATRASADO' && row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
                     td.innerText = 'ATRASO FAREVA E CEVA';
                     td.classList.add('carregamento-atrasado');
-                }
-                // Se for a coluna de CARREGAMENTO e o status for ATRASADO
-                else if (index === carregamentoIndex && row[statusIndex] === 'ATRASADO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
+                } else if (index === carregamentoIndex && row[statusIndex] === 'ATRASADO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
                     td.innerText = 'ATRASO CEVA';
                     td.classList.add('carregamento-atrasado');
-                }
-                // Se for a coluna de CARREGAMENTO e o status for ATRASO.JANELA
-                else if (index === carregamentoIndex && row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
+                } else if (index === carregamentoIndex && row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
                     td.innerText = 'ATRASO FAREVA';
                     td.classList.add('carregamento-atrasado');
-                }
-                // Se for a coluna de PLANEJAMENTO e o status plan for PLAN.ATRASO
-                else if (index === planejamentoIndex && row[statusPlanIndex] === 'PLAN.ATRASO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
+                } else if (index === planejamentoIndex && row[statusPlanIndex] === 'PLAN.ATRASO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
                     td.innerText = 'ATRASADO';
                     td.classList.add('carregamento-atrasado');
-                }
-                // Formatação específica para a coluna JANELA quando a linha está piscando
-                else if (index === janelaIndex && linhaPlanAtraso) {
-                    td.classList.add('carregamento-atrasado');
-                    td.innerText = cell;
-                }
-                // Formatação específica para a coluna HR CHEGADA DOCA quando o CARREGAMENTO está atrasado
-                else if (index === hrChegadaDocaIndex && linhaCarregamentoAtrasado) {
-                    td.classList.add('carregamento-atrasado');
-                    td.innerText = cell;
-                }
-                // Formatação específica para JANELA com ATRASO.JANELA
-                else if (index === janelaIndex && 
-                         row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA' && 
-                         !['POSTERGADA', 'CANCELADA', 'OK'].includes(row[carregamentoIndex])) {
-                    td.classList.add('carregamento-atrasado');
-                    td.classList.add('fundo-vermelho');
-                    td.style.color = 'white';
-                    td.innerText = cell;
-                }
-                else {
-                    // Lógica original de formatação
+                } else {
                     if (cell && cell.includes('1899-12-') && index > 0) {
                         td.innerText = formatTime(cell);
                     } else {
                         td.innerText = index === 0 ? formatDate(cell) : 
-                                       index === row.length - 1 ? cell : 
-                                       cell || '';
+                                     index === row.length - 1 ? cell : 
+                                     cell || '';
                     }
                     
                     applyConditionalFormatting(td, cell || '');
@@ -516,21 +567,32 @@ function fetchData() {
         .catch(error => {
             console.error('Erro ao carregar os dados: ', error);
             hideLoadingOverlay();
-        });
+        });       
 }
 
-         function showTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.classList.remove('active');
-            });
-            document.getElementById(tabName).classList.add('active');
-            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
-            currentTab = tabName;
-            updateInfo(tabName === 'embarquesPA' ? 'tablePA' : 'tableFabrica', currentTab === 'embarquesPA' ? lastDataPA : lastDataFabrica);
+function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Controla a visibilidade da legenda
+    const legenda = document.querySelector('.legenda');
+    if (legenda) {
+        if (tabName === 'embarquesPA') {
+            legenda.style.display = 'block';
+        } else {
+            legenda.style.display = 'none';
         }
+    }
+    
+    document.getElementById(tabName).classList.add('active');
+    document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+    currentTab = tabName;
+    updateInfo(tabName === 'embarquesPA' ? 'tablePA' : 'tableFabrica', currentTab === 'embarquesPA' ? lastDataPA : lastDataFabrica);
+}
         function autoSwitchTabs() {
             currentTab = currentTab === "embarquesPA" ? "embarquesFabrica" : "embarquesPA";
             showTab(currentTab);
@@ -554,11 +616,13 @@ function fetchData() {
             loadingOverlay.appendChild(spinner);
             document.body.appendChild(loadingOverlay);
         }
+        
         function hideLoadingOverlay() {
             if (loadingOverlay) {
                 document.body.removeChild(loadingOverlay);
                 loadingOverlay = null;
             }
+            
         }
         function updateClock() {
             const clockElement = document.getElementById("digital-clock");
@@ -598,13 +662,22 @@ function fetchData() {
             // Já inicia o timer ativo por padrão
             timerInterval = setInterval(autoSwitchTabs, 40000);
         };
+
+                          /*_________________________________ FIM JAVASCRIPT__________________________________________________  */   
     </script>
+
+
 </head>
 <body>
-    <div class="header-container">
+       <div class="header-container">
         <h1>Tracking Board Outbound</h1>
         <div class="info-container"></div>
         <img src="LogoCEVA.jpg" class="logo" alt="Logo">
+        <div class="legenda">
+            <span class="vermelho">PLANEJAMENTO :</span> "OK" até 2 horas antes da janela<br>
+            <span class="vermelho">JANELA CARREGAMENTO FAREVA :</span> 2 horas para carregar a contar da "JANELA"<br>
+            <span class="vermelho">CARREGAMENTO CEVA :</span> 2 horas a contar da "HR CHEGADA DOCA"
+        </div>
     </div>
     <div class="tab-buttons">
         <button class="tab-button active" onclick="showTab('embarquesPA')">Embarques PA</button>
