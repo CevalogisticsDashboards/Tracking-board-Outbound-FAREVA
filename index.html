@@ -180,13 +180,17 @@
         }
         /* Novos estilos para linhas atrasadas */
         .linha-atrasada {
-         animation: piscar 1s infinite;
-          background-color: #fba3a3 !important;  /* Light red with !important to override other background colors */
+        animation: piscar 1s infinite;
+        background-color: #fba3a3 !important;  /* Light red with !important to override other background colors */
         }
         .linha-plan-atraso {
-    animation: piscar 1s infinite;
-    background-color: #fba3a3 !important; /* Vermelho claro com !important para sobrescrever outras cores de fundo */
-}
+        animation: piscar 1s infinite;
+        background-color: #fba3a3 !important; /* Vermelho claro com !important para sobrescrever outras cores de fundo */
+        } 
+        .linha-atrasado-janela {
+        animation: piscar 1s infinite;
+        background-color: #fba3a3 !important; /* Vermelho claro com !important para sobrescrever outras cores de fundo */
+        }
 
         .carregamento-atrasado {
          background-color: rgb(225, 38, 38) !important;
@@ -248,9 +252,9 @@
             font-weight: bold;
             color: #c5cc00;
         }
-        /* Esconder últimas três colunas apenas da tabela PA */
-        #tablePA tr th:nth-last-child(-n+3),
-        #tablePA tr td:nth-last-child(-n+3) {
+        /* Esconder últimas 4 colunas apenas da tabela PA */
+        #tablePA tr th:nth-last-child(-n+0),
+        #tablePA tr td:nth-last-child(-n+0) {
         display: none;
         }
         </style>
@@ -345,29 +349,73 @@ function updateTable(tableId, newData, lastData) {
             const carregamentoIndex = newData[0].indexOf('CARREGAMENTO');
             const statusPlanIndex = newData[0].indexOf('Status Plan');
             const planejamentoIndex = newData[0].indexOf('PLANEJAMENTO');
+            const janelaIndex = newData[0].indexOf('JANELA');
+            const hrChegadaDocaIndex = newData[0].indexOf('HR CHEGADA DOCA');
+            const statusCarregamentoXJanelaIndex = newData[0].indexOf('Status Carregamento X JANELA');
+            
+            // Variáveis para verificar linhas que devem piscar
+            let linhaCarregamentoAtrasado = false;
+            let linhaPlanAtraso = false;
+            let linhaAtrasadoJanela = false;
             
             // Add blinking effect for rows with "ATRASADO" status
             if (row[statusIndex] === 'ATRASADO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(row[carregamentoIndex])) {
                 tr.classList.add('linha-atrasada');
+                linhaCarregamentoAtrasado = true;
             }
             
             // Add blinking effect for rows with "PLAN.ATRASO" statusPlan
             if (row[statusPlanIndex] === 'PLAN.ATRASO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(row[planejamentoIndex])) {
                 tr.classList.add('linha-plan-atraso');
+                linhaPlanAtraso = true;
+            }
+            // Add blinking effect for rows with "ATRASO.JANELA"
+            if (row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(row[carregamentoIndex])) {
+                tr.classList.add('linha-atrasado-janela');
+                linhaAtrasadoJanela = true;
             }
             
             row.forEach((cell, index) => {
                 let td = document.createElement("td");
                 
                 // Se for a coluna de CARREGAMENTO e o status for ATRASADO
-                if (index === carregamentoIndex && row[statusIndex] === 'ATRASADO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
-                    td.innerText = 'ATRASADO';
+                if (index === carregamentoIndex && row[statusIndex] === 'ATRASADO' && row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
+                    td.innerText = 'ATRASO FAREVA E CEVA';
+                    td.classList.add('carregamento-atrasado');
+                }
+                // Se for a coluna de CARREGAMENTO e o status for ATRASADO
+                else if (index === carregamentoIndex && row[statusIndex] === 'ATRASADO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
+                    td.innerText = 'ATRASO CEVA';
+                    td.classList.add('carregamento-atrasado');
+                }
+                // Se for a coluna de CARREGAMENTO e o status for ATRASO.JANELA
+                else if (index === carregamentoIndex && row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
+                    td.innerText = 'ATRASO FAREVA';
                     td.classList.add('carregamento-atrasado');
                 }
                 // Se for a coluna de PLANEJAMENTO e o status plan for PLAN.ATRASO
                 else if (index === planejamentoIndex && row[statusPlanIndex] === 'PLAN.ATRASO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
                     td.innerText = 'ATRASADO';
                     td.classList.add('carregamento-atrasado');
+                }
+                // Formatação específica para a coluna JANELA quando a linha está piscando
+                else if (index === janelaIndex && linhaPlanAtraso) {
+                    td.classList.add('carregamento-atrasado');
+                    td.innerText = cell;
+                }
+                // Formatação específica para a coluna HR CHEGADA DOCA quando o CARREGAMENTO está atrasado
+                else if (index === hrChegadaDocaIndex && linhaCarregamentoAtrasado) {
+                    td.classList.add('carregamento-atrasado');
+                    td.innerText = cell;
+                }
+                // Formatação específica para JANELA com ATRASO.JANELA
+                else if (index === janelaIndex && 
+                         row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA' && 
+                         !['POSTERGADA', 'CANCELADA', 'OK'].includes(row[carregamentoIndex])) {
+                    td.classList.add('carregamento-atrasado');
+                    td.classList.add('fundo-vermelho');
+                    td.style.color = 'white';
+                    td.innerText = cell;
                 }
                 else {
                     // Lógica original de formatação
@@ -391,10 +439,10 @@ function updateTable(tableId, newData, lastData) {
     return newData;
 }
 function fetchData() {
-    fetch('https://script.google.com/macros/s/AKfycbyNvysDBAKj2EHPwQjV7oC9oRzK454kRprCCPqW-83vf-WvEnVETTxfC-Rb0Oy5C4m6/exec')
+    fetch('https://script.google.com/macros/s/AKfycbzbfCKMhdFtgUoEzO9rAvnjzethbvah8mg-bxYFI44Wp-bMSl5X-Vj1E6bWhRym0zuD/exec')
         .then(response => response.json())
         .then(data => {
-            data.EMBARQUES_PA[0].push("Hora atual", "Status", "Status Plan");
+            data.EMBARQUES_PA[0].push("Hora atual", "Status", "Status Plan", "Status Carregamento X JANELA");
             const formatDateTime = () => {
                 const now = new Date();
                 const dia = now.getDate().toString().padStart(2, '0');
@@ -410,16 +458,21 @@ function fetchData() {
                     const horaIndex = data.EMBARQUES_PA[0].indexOf("HR CHEGADA DOCA");
                     const janelaIndex = data.EMBARQUES_PA[0].indexOf("JANELA");
                     
-                    // Formatação da data e hora de chegada
+                    // Formatação da data e hora da chegada
                     const dataChegadaOriginal = row[dataIndex].trim();
                     const horaChegadaOriginal = row[horaIndex].trim();
-                    
-                    // Parse a data de chegada como um objeto Date
                     const dataChegadaParsed = new Date(dataChegadaOriginal);
                     dataChegadaParsed.setHours(horaChegadaOriginal.split(":")[0]);
                     dataChegadaParsed.setMinutes(horaChegadaOriginal.split(":")[1]);
                     
-                    // Cálculo da diferença de tempo
+                    // Formatação da data e hora da janela
+                    const dataJanelaOriginal = row[dataIndex].trim();
+                    const horaJanelaOriginal = row[janelaIndex].trim();
+                    const dataJanelaParsed = new Date(dataJanelaOriginal);
+                    dataJanelaParsed.setHours(horaJanelaOriginal.split(":")[0]);
+                    dataJanelaParsed.setMinutes(horaJanelaOriginal.split(":")[1]);
+                    
+                    // Cálculo da diferença de tempo para Status
                     const horaAtual = new Date();
                     const diferencaMinutosChegada = (horaAtual.getTime() - dataChegadaParsed.getTime()) / (1000 * 60);
                     
@@ -432,21 +485,26 @@ function fetchData() {
                     }
                     
                     // Lógica para statusPlan
-                    const dataJanelaOriginal = row[dataIndex].trim();
-                    const horaJanelaOriginal = row[janelaIndex].trim();
-                    const dataJanelaParsed = new Date(dataJanelaOriginal);
-                    dataJanelaParsed.setHours(horaJanelaOriginal.split(":")[0]);
-                    dataJanelaParsed.setMinutes(horaJanelaOriginal.split(":")[1]);
-                    
-                    const diferencaMinutosJanela = (dataJanelaParsed.getTime() - horaAtual.getTime()) / (1000 * 60);
+                    const diferencaMinutosPlan = (dataJanelaParsed.getTime() - horaAtual.getTime()) / (1000 * 60);
                     let statusPlan;
-                    if (diferencaMinutosJanela <= 30 || diferencaMinutosJanela < 0) { 
+                    if (diferencaMinutosPlan <= 120) { 
                         statusPlan = "PLAN.ATRASO";
                     } else {
                         statusPlan = "PLAN.NOPRAZO";
                     }
                     
-                    row.push(formatDateTime(), status, statusPlan);
+                    // Cálculo da diferença de tempo para Status Carregamento X JANELA
+                    const diferencaMinutosCarregamentoJanela = (horaAtual.getTime() - dataJanelaParsed.getTime()) / (1000 * 60);
+                    
+                    // Lógica para Status Carregamento X JANELA
+                    let statusCarregamentoJanela;
+                    if (diferencaMinutosCarregamentoJanela > 120) { 
+                        statusCarregamentoJanela = "ATRASO.JANELA";
+                    } else {
+                        statusCarregamentoJanela = "NO.PRAZO.JANELA";
+                    }
+                    
+                    row.push(formatDateTime(), status, statusPlan, statusCarregamentoJanela);
                 }
                 return row;
             });
