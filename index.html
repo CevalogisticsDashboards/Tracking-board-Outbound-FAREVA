@@ -391,7 +391,7 @@ function updateTable(tableId, newData, lastData) {
     return newData;
 }
 function fetchData() {
-    fetch('https://script.google.com/macros/s/AKfycbyT7wTm2r9jGnyXi9GzbZTlefMZTh3lz9TIJU8cbczskRZJMjLkS_zw8zFd4hH-3AR0/exec')
+    fetch('https://script.google.com/macros/s/AKfycbyNvysDBAKj2EHPwQjV7oC9oRzK454kRprCCPqW-83vf-WvEnVETTxfC-Rb0Oy5C4m6/exec')
         .then(response => response.json())
         .then(data => {
             data.EMBARQUES_PA[0].push("Hora atual", "Status", "Status Plan");
