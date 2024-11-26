@@ -4,165 +4,187 @@
     <title>Tracking Board Outbound</title>
     <style>
 
-                     /*_________________________________ INICIO CSS__________________________________________________  */
+/*_________________________________ INICIO CSS__________________________________________________  */
 
+/*_________________________________ INICIO CSS__________________________________________________  */
 
-        /* Estilo base do corpo da página */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            text-align: center;
-        }
-        /* Container para o título e logo */
-        .header-container {
-            background-color: #0b1b44;
-            padding: 50px 30px; /* Aumentar o tamanho vertical */
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        /* Estilo da logo */
-        .logo {
-            position: absolute;
-            right: 10px;
-            top: 20%;
-            transform: translateY(-50%);
-            height: 80px; /* Ajuste conforme necessário */
-            width: auto;
-        }
-        /* Estilização do título principal com sombra */
-        h1 {
-            font-size: 4.5em;
-            font-weight: bold;
-            margin: 0;
-            color: white;
-            text-shadow: 4px 4px 8px rgba(0, 0, 139, 0.6), 0 0 10px rgba(0, 0, 139, 0.4);
-        }
-        .info-container {
-            margin-top: 30px;  /* Aumentado para mover mais para baixo */
-            color: white;
-            font-size: 1.5em;  /* Aumentado o tamanho da fonte */
-            display: flex;
-            justify-content: center;  /* Centraliza horizontalmente */
-            align-items: center;
-            font-weight: bold;  /* Adiciona o negrito */
-            padding: 0 20px;
-        }
-        .tab-buttons {
-            margin-top: 35px;
-            margin-bottom: 35px;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-        .tab-button {
-            padding: 10px 150px;
-            font-size: 18px;
-            background-color: white;
-            color: #0b1b44;
-            border: 2px solid #0b1b44;
-            cursor: pointer;
-            margin-right: 5px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .tab-button:hover {
-            background-color: #1a2f6f;
-            color: white;
-        }
-        .tab-button.active {
-            background-color: #0b1b44;
-            color: white;
-            font-weight: bold;
-        }
-        .toggle-timer {
-            position: absolute;
-            right: 10px;
-            top: -75px;
-            padding: 5px 15px;
-            font-size: 12px;
-            background-color: white;
-            color: #0b1b44;
-            border: 2px solid #0b1b44;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        .toggle-timer:hover {
-            background-color: #1a2f6f;
-            color: white;
-        }
-        .toggle-timer.active {
-            background-color: #0b1b44;
-            color: white;
-            font-weight: bold;
-        }
-        .tab-content {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-        .tab-content.active {
-            display: block;
-            opacity: 1;
-        }
-        table {
-            width: 99%;
-            border-collapse: collapse;
-            margin: 20px auto;
-            table-layout: fixed;
-        }
-        th, td {
-            padding: 8px;
-            text-align: center;
-            border: 1px solid #ddd;
-            white-space: normal;
-            word-wrap: break-word;
-            word-break: break-word;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            height: 25px;
-        }
-        
-        tr:first-child {
-            background-color: #0b1b44;
-            color: white;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .clock {
-            position: absolute;
-            top: 8px;
-            left: 5%;
-            transform: translateX(-50%);
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: left;
-            gap: 10px;
-        }
-        .clock-icon {
-            width: 30px;
-            height: 30px;
-            fill: #ffffff;
-            transform: translateY(-2px);
-        }
-        .clock-text {
-            display: flex;
-            align-items: center;
-        }
+/* Estilo base do corpo da página */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    text-align: center;
+}
 
-        /* Estilo base para as colunas CARGA e PALLETS */
+/* Container para o título e logo */
+.header-container {
+    background-color: #0b1b44;
+    padding: 50px 30px; /* Aumentar o tamanho vertical */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilo da logo */
+.logo {
+    position: absolute;
+    right: 10px;
+    top: 20%;
+    transform: translateY(-50%);
+    height: 80px; /* Ajuste conforme necessário */
+    width: auto;
+}
+
+/* Estilização do título principal com sombra */
+h1 {
+    font-size: 4.5em;
+    font-weight: bold;
+    margin: 0;
+    color: white;
+    text-shadow: 4px 4px 8px rgba(0, 0, 139, 0.6), 0 0 10px rgba(0, 0, 139, 0.4);
+}
+
+.info-container {
+    margin-top: 30px;  /* Aumentado para mover mais para baixo */
+    color: white;
+    font-size: 1.5em;  /* Aumentado o tamanho da fonte */
+    display: flex;
+    justify-content: center;  /* Centraliza horizontalmente */
+    align-items: center;
+    font-weight: bold;  /* Adiciona o negrito */
+    padding: 0 20px;
+}
+
+.tab-buttons {
+    margin-top: 35px;
+    margin-bottom: 35px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.tab-button {
+    padding: 10px 150px;
+    font-size: 18px;
+    background-color: white;
+    color: #0b1b44;
+    border: 2px solid #0b1b44;
+    cursor: pointer;
+    margin-right: 5px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tab-button:hover {
+    background-color: #1a2f6f;
+    color: white;
+}
+
+.tab-button.active {
+    background-color: #0b1b44;
+    color: white;
+    font-weight: bold;
+}
+
+.toggle-timer {
+    position: absolute;
+    right: 10px;
+    top: -75px;
+    padding: 5px 15px;
+    font-size: 12px;
+    background-color: white;
+    color: #0b1b44;
+    border: 2px solid #0b1b44;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.toggle-timer:hover {
+    background-color: #1a2f6f;
+    color: white;
+}
+
+.toggle-timer.active {
+    background-color: #0b1b44;
+    color: white;
+    font-weight: bold;
+}
+
+.tab-content {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.tab-content.active {
+    display: block;
+    opacity: 1;
+}
+
+table {
+    width: 99%;
+    border-collapse: collapse;
+    margin: 20px auto;
+    table-layout: fixed;
+}
+
+th, td {
+    padding: 8px;
+    text-align: center;
+    border: 1px solid #ddd;
+    white-space: normal;
+    word-wrap: break-word;
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 25px;
+    position: relative;
+    z-index: 1;
+}
+
+tr:first-child {
+    background-color: #0b1b44;
+    color: white;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.clock {
+    position: absolute;
+    top: 8px;
+    left: 5%;
+    transform: translateX(-50%);
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 10px;
+}
+
+.clock-icon {
+    width: 30px;
+    height: 30px;
+    fill: #ffffff;
+    transform: translateY(-2px);
+}
+
+.clock-text {
+    display: flex;
+    align-items: center;
+}
+
+/* Estilo base para as colunas CARGA e PALLETS */
 .coluna-azul-claro {
     background-color: #e6f3ff !important; /* Azul bem claro */
 }
@@ -176,127 +198,185 @@
 .coluna-azul-claro-piscando {
     animation: piscar-vermelho-azul 1s infinite;
 }
-        /* Estilos para as condicionais */
-        @keyframes piscar {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .ok {
-            background-color: green;
-            color: white;
-        }
-        .em-processo {
-            background-color: rgb(237, 237, 57);
-            color: black;
-        }
-        .postergada {
-            background-color: darkred;
-            color: white;
-        }
-        .cancelada {
-            background-color: rgb(61, 56, 56);
-            color: white;
-        }
-        /* Novos estilos para linhas atrasadas */
-        .linha-atrasada {
-        animation: piscar 1s infinite;
-        background-color: #fba3a3 !important;  /* Light red with !important to override other background colors */
-        }
-        .linha-plan-atraso {
-        animation: piscar 1s infinite;
-        background-color: #fba3a3 !important; /* Vermelho claro com !important para sobrescrever outras cores de fundo */
-        } 
-        .linha-atrasado-janela {
-        animation: piscar 1s infinite;
-        background-color: #fba3a3 !important; /* Vermelho claro com !important para sobrescrever outras cores de fundo */
-        }
 
-        .carregamento-atrasado {
-         background-color: rgb(225, 38, 38) !important;
-         color: white !important;
-        }
-            .loading-spinner {
-            border: 16px solid #f3f3f3;
-            border-top: 16px solid #3498db;
-            border-radius: 50%;
-            width: 80px;
-            height: 80px;
-            animation: spin 2s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-        }
-        @media screen and (max-width: 1500px) {
-            .clock {
-                display: none !important;
-            }
-            
-            .clock-icon {
-                display: none !important;
-            }
-            
-            .logo {
-                display: none !important;
-            }
-            .legenda {
+/* Modificações para priorizar formatações condicionais */
+.linha-atrasada,
+.linha-atrasado-janela,
+.linha-plan-atraso {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Keyframe de piscar modificado */
+@keyframes piscar {
+    0%, 100% { background-color: transparent; }
+    50% { background-color: rgba(255, 255, 255, 0.3); }
+}
+
+.linha-atrasada::after,
+.linha-atrasado-janela::after,
+.linha-plan-atraso::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    animation: piscar 1s infinite;
+    pointer-events: none;
+    z-index: 2; /* Sobre o elemento base, mas abaixo dos estados */
+}
+
+/* Estados com maior prioridade */
+.ok {
+    background-color: green !important;
+    color: white !important;
+    position: relative;
+    z-index: 3;
+}
+
+.em-processo {
+    background-color: rgb(237, 237, 57) !important;
+    color: black !important;
+    position: relative;
+    z-index: 3;
+}
+
+.postergada {
+    background-color: darkred !important;
+    color: white !important;
+    position: relative;
+    z-index: 3;
+}
+
+.cancelada {
+    background-color: rgb(61, 56, 56) !important;
+    color: white !important;
+    position: relative;
+    z-index: 3;
+}
+
+.carregamento-atrasado,
+.celula-atraso-especial {
+    background-color: red !important;
+    color: white !important;
+    position: relative;
+    z-index: 4; /* Máxima prioridade */
+}
+
+/* Linha atrasada com formatações condicionais */
+.linha-atrasada.ok,
+.linha-atrasado-janela.ok,
+.linha-plan-atraso.ok {
+    background-color: green !important;
+    color: white !important;
+    z-index: 3;
+}
+
+.linha-atrasada.em-processo,
+.linha-atrasado-janela.em-processo,
+.linha-plan-atraso.em-processo {
+    background-color: rgb(237, 237, 57) !important;
+    color: black !important;
+    z-index: 3;
+}
+
+.linha-atrasada.postergada,
+.linha-atrasado-janela.postergada,
+.linha-plan-atraso.postergada {
+    background-color: darkred !important;
+    color: white !important;
+    z-index: 3;
+}
+
+.linha-atrasada.cancelada,
+.linha-atrasado-janela.cancelada,
+.linha-plan-atraso.cancelada {
+    background-color: rgb(61, 56, 56) !important;
+    color: white !important;
+    z-index: 3;
+}
+
+/* Linha atrasada com background padrão */
+.linha-atrasada,
+.linha-atrasado-janela,
+.linha-plan-atraso {
+    background-color: #fba3a3 !important; /* Light red with !important to override other background colors */
+}
+
+.atraso-ceva {
+    background-color: red;
+    color: white;
+}
+
+.loading-spinner {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #3498db;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 2s linear infinite;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+@media screen and (max-width: 1500px) {
+    .clock {
+        display: none !important;
+    }
+    
+    .clock-icon {
+        display: none !important;
+    }
+    
+    .logo {
+        display: none !important;
+    }
+    .legenda {
         display: none !important; /* Adicionado para esconder a legenda em telas pequenas */
     }
-            .clock, .clock-icon, .logo {
-                transition: opacity 0.3s ease-in-out;
-            }
-        }
-        .info-container {
-            display: flex;
-            gap: 2rem;
-            align-items: center;
-            flex-wrap: wrap;
-            padding: 10px;
-        }
-        .info-item {
-            white-space: nowrap;
-            font-size: 30px;
-        }
-        .value {
-            font-size: 30px;
-            font-weight: bold;
-            color: #c5cc00;
-        }
-
-        /* Estilo base para as colunas CARGA e PALLETS */
-.coluna-azul-claro {
-    background-color: #e6f3ff !important; /* Azul bem claro */
+    .clock, .clock-icon, .logo {
+        transition: opacity 0.3s ease-in-out;
+    }
 }
 
-/* Estilo para quando a linha estiver piscando */
-@keyframes piscar-vermelho-azul {
-    0%, 100% { background-color: #e6f3ff; }
-    50% { background-color: #ffcccc; }
+.info-container {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 10px;
 }
 
-.coluna-azul-claro-piscando {
-    animation: piscar-vermelho-azul 1s infinite;
+.info-item {
+    white-space: nowrap;
+    font-size: 30px;
 }
 
-        /* Esconder últimas 4 colunas apenas da tabela PA */
-        #tablePA tr th:nth-last-child(-n+4),
-        #tablePA tr td:nth-last-child(-n+4) {
-        display: none;
-        }
+.value {
+    font-size: 30px;
+    font-weight: bold;
+    color: #c5cc00;
+}
 
-        .legenda {
+/* Esconder últimas 4 colunas apenas da tabela PA */
+#tablePA tr th:nth-last-child(-n+4),
+#tablePA tr td:nth-last-child(-n+4) {
+    display: none;
+}
+
+.legenda {
     position: absolute; /* Voltamos para absolute */
     margin-top: 360px; /* Espaço negativo para subir a legenda */
     left: 0.8%;
@@ -308,12 +388,18 @@
     display: block;
     z-index: 100;
 }
-        .legenda .vermelho {
-            color: red; /* Define a cor vermelha para as partes específicas */
-        }
 
-                  /*_________________________________________FIM DO CSS__________________________________________________  */
-        </style>
+.legenda .vermelho {
+    color: red; /* Define a cor vermelha para as partes específicas */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/*_________________________________________FIM DO CSS__________________________________________________  */
+   </style>
 
                            
 
@@ -368,8 +454,10 @@
         }
         function applyConditionalFormatting(td, text) {
     td.classList.remove('ok', 'em-processo', 'postergada', 'cancelada', 'carregamento-atrasado');
+    
+    // Adicione esta nova condição
     if (text.toUpperCase() === 'ATRASADO') {
-        td.classList.add('carregamento-atrasado');
+        td.classList.add('carregamento-atrasado');  // Usa a mesma classe que é definida para outras situações
     } else if (text.toUpperCase() === 'NO PRAZO') {
         td.classList.add('ok');
     } else {
@@ -389,14 +477,14 @@
         }
     }
 }
-function updateTable(tableId, newData, lastData) {
+function updateTable(tableId, newData, lastData, currentTabName) {
     if (areArraysEqual(newData, lastData)) {
         return lastData;
     }
     const table = document.getElementById(tableId);
     table.innerHTML = '';
     if (newData.length === 0) return lastData;
-    
+
     let headerRow = document.createElement("tr");
     newData[0].forEach(cell => {
         let td = document.createElement("td");
@@ -404,83 +492,120 @@ function updateTable(tableId, newData, lastData) {
         headerRow.appendChild(td);
     });
     table.appendChild(headerRow);
-    
-    // Encontrar os índices das novas colunas
+
+    // Find indices of new columns
     const cargaIndex = newData[0].indexOf('CARGA');
     const palletsIndex = newData[0].indexOf('PALLETS');
-    
+    const janelaIndex = newData[0].indexOf('JANELA');
+    const hrPortariaIndex = newData[0].indexOf('HR PORTARIA');
+    const statusCarregamentoXJanelaIndex = newData[0].indexOf('Status Carregamento X JANELA');
+    const carregamentoIndex = newData[0].indexOf('CARREGAMENTO');
+    const statusIndex = newData[0].indexOf('Status');
+    const hrChegadaDocaIndex = newData[0].indexOf('HR CHEGADA DOCA');
+    const hrInicioPlanejamentoIndex = newData[0].indexOf('PLANEJAMENTO');
+    const hrInicioExpIndex = newData[0].indexOf('HR INICIO DE EXP');
+    const DocaIndex = newData[0].indexOf('DOCA');
+    const pickingIndex = newData[0].indexOf('PICKING');
+    const statusPlanIndex = newData[0].indexOf('Status Plan');
+    const planejamentoIndex = newData[0].indexOf('PLANEJAMENTO');
+
     newData.slice(1).forEach(row => {
         if (shouldShowRow(row, newData[0])) {
             let tr = document.createElement("tr");
-            
-            const statusIndex = newData[0].indexOf('Status');
-            const carregamentoIndex = newData[0].indexOf('CARREGAMENTO');
-            const statusPlanIndex = newData[0].indexOf('Status Plan');
-            const planejamentoIndex = newData[0].indexOf('PLANEJAMENTO');
-            const janelaIndex = newData[0].indexOf('JANELA');
-            const hrChegadaDocaIndex = newData[0].indexOf('HR CHEGADA DOCA');
-            const statusCarregamentoXJanelaIndex = newData[0].indexOf('Status Carregamento X JANELA');
-            
-            // Variáveis para verificar linhas que devem piscar
-            let linhaCarregamentoAtrasado = false;
-            let linhaPlanAtraso = false;
-            let linhaAtrasadoJanela = false;
-            
-            // Add blinking effect for rows with "ATRASADO" status
-            if (row[statusIndex] === 'ATRASADO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(row[carregamentoIndex])) {
-                tr.classList.add('linha-atrasada');
-                linhaCarregamentoAtrasado = true;
+
+            // Variables to track blinking rows and delay in window
+            let linhaPiscando = false;
+            let atrasoJanela = false;
+
+            // Check conditions for planning delay - considering "PLANEJAMENTO" column value
+            const isPlanejamentoAtrasado = row[statusPlanIndex] === 'PLAN.ATRASO' && 
+                !['OK', 'POSTERGADA', 'CANCELADA'].includes(row[planejamentoIndex]);
+
+            // Check conditions for CEVA delay
+            const hrPortaria = row[hrPortariaIndex] || '';
+            const status = row[statusIndex];
+            const carregamento = row[carregamentoIndex] || '';
+            const shouldHighlightAtraso = status === 'ATRASADO' && 
+                !['CANCELADA', 'POSTERGADA', 'OK'].includes(carregamento);
+
+            if (currentTabName === 'CARREGAMENTOS PA' && (hrPortaria === '' || row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA')) {
+                tr.classList.add('linha-piscando');
+                linhaPiscando = true;
+
+                // Set flag for window delay
+                if (row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA') {
+                    atrasoJanela = true;
+                }
             }
-            
-            // Add blinking effect for rows with "PLAN.ATRASO" statusPlan
-            if (row[statusPlanIndex] === 'PLAN.ATRASO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(row[planejamentoIndex])) {
-                tr.classList.add('linha-plan-atraso');
-                linhaPlanAtraso = true;
-            }
-            
-            // Add blinking effect for rows with "ATRASO.JANELA"
-            if (row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(row[carregamentoIndex])) {
-                tr.classList.add('linha-atrasado-janela');
-                linhaAtrasadoJanela = true;
-            }
-            
+
             row.forEach((cell, index) => {
                 let td = document.createElement("td");
-                
-                // Adicionar fundo azul claro para CARGA e PALLETS (exceto no cabeçalho)
-                if ((index === cargaIndex || index === palletsIndex)) {
-                    if (linhaCarregamentoAtrasado || linhaPlanAtraso || linhaAtrasadoJanela) {
-                        td.classList.add('coluna-azul-claro-piscando');
-                    } else {
-                        td.classList.add('coluna-azul-claro');
-                    }
+
+                // Apply blinking style for specific columns when there is a delay
+                if (linhaPiscando && [janelaIndex, hrPortariaIndex].includes(index)) {
+                    td.classList.add('coluna-azul-claro-piscando');
                 }
-                
-                // Resto da lógica original de formatação das células
-                if (index === carregamentoIndex && row[statusIndex] === 'ATRASADO' && row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
-                    td.innerText = 'ATRASO FAREVA E CEVA';
-                    td.classList.add('carregamento-atrasado');
-                } else if (index === carregamentoIndex && row[statusIndex] === 'ATRASADO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
-                    td.innerText = 'ATRASO CEVA';
-                    td.classList.add('carregamento-atrasado');
-                } else if (index === carregamentoIndex && row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
-                    td.innerText = 'ATRASO FAREVA';
-                    td.classList.add('carregamento-atrasado');
-                } else if (index === planejamentoIndex && row[statusPlanIndex] === 'PLAN.ATRASO' && !['POSTERGADA', 'CANCELADA', 'OK'].includes(cell)) {
-                    td.innerText = 'ATRASADO';
-                    td.classList.add('carregamento-atrasado');
+                // Apply red background and white text for "JANELA" and "HR PORTARIA" columns when there is a window delay
+                else if (atrasoJanela && (index === janelaIndex || index === hrPortariaIndex)) {
+                    td.style.backgroundColor = 'red';
+                    td.style.color = 'white';
+                }
+                // Apply light blue background for specific columns
+                else if ([cargaIndex, palletsIndex, janelaIndex, hrPortariaIndex].includes(index)) {
+                    td.classList.add('coluna-azul-claro');
+                }
+
+                // Cell formatting
+                if (cell && cell.includes('1899-12-') && index > 0) {
+                    td.innerText = formatTime(cell);
                 } else {
-                    if (cell && cell.includes('1899-12-') && index > 0) {
-                        td.innerText = formatTime(cell);
-                    } else {
-                        td.innerText = index === 0 ? formatDate(cell) : 
-                                     index === row.length - 1 ? cell : 
-                                     cell || '';
-                    }
-                    
-                    applyConditionalFormatting(td, cell || '');
+                    td.innerText = index === 0 ? formatDate(cell) :
+                                 index === row.length - 1 ? cell :
+                                 cell || '';
                 }
-                
+
+                // Update the "CARREGAMENTO" column when status is "ATRASADO" and not cancelled/postponed/OK
+                if (index === carregamentoIndex && shouldHighlightAtraso) {
+                    td.innerText = 'ATRASO CEVA MAIOR QUE 2Hrs';
+                    td.style.backgroundColor = 'red';
+                    td.style.color = 'white';
+                }
+
+                // Apply formatting for "PLANEJAMENTO" column when "Status Plan" is "PLAN.ATRASO"
+                if (index === planejamentoIndex && row[statusPlanIndex] === 'PLAN.ATRASO' && 
+                    !['OK', 'POSTERGADA', 'CANCELADA'].includes(cell)) {
+                    td.innerText = 'ATRASADO';
+                    td.style.backgroundColor = 'red';
+                    td.style.color = 'white';
+                }
+
+                // Apply specific column styling for CEVA delay
+                if (shouldHighlightAtraso && [
+                    hrChegadaDocaIndex, 
+                    hrInicioPlanejamentoIndex, 
+                    hrInicioExpIndex, 
+                    DocaIndex, 
+                    pickingIndex, 
+                    
+                ].includes(index)) {
+                    td.classList.add('linha-atrasada');
+                }
+
+                // Apply blinking for specific columns when planning is delayed
+                if (isPlanejamentoAtrasado && [
+                    janelaIndex, 
+                    cargaIndex, 
+                    palletsIndex, 
+                    hrPortariaIndex,
+                    hrChegadaDocaIndex, 
+                    DocaIndex,
+                    hrInicioExpIndex, 
+                    
+                ].includes(index)) {
+                    td.classList.add('linha-plan-atraso');
+                }
+
+                applyConditionalFormatting(td, cell || '');
                 tr.appendChild(td);
             });
             table.appendChild(tr);
@@ -488,7 +613,7 @@ function updateTable(tableId, newData, lastData) {
     });
     updateInfo(tableId, newData);
     return newData;
-}
+}   
 function fetchData() {
     fetch('https://script.google.com/macros/s/AKfycbzbfCKMhdFtgUoEzO9rAvnjzethbvah8mg-bxYFI44Wp-bMSl5X-Vj1E6bWhRym0zuD/exec')
         .then(response => response.json())
@@ -503,64 +628,60 @@ function fetchData() {
                 const minutos = now.getMinutes().toString().padStart(2, '0');
                 return `${dia}/${mes}/${ano} ${horas}:${minutos}`;
             };
+            
             data.EMBARQUES_PA = data.EMBARQUES_PA.map((row, index) => {
                 if (index !== 0) {
                     const dataIndex = data.EMBARQUES_PA[0].indexOf("DATA");
-                    const horaIndex = data.EMBARQUES_PA[0].indexOf("HR CHEGADA DOCA");
                     const janelaIndex = data.EMBARQUES_PA[0].indexOf("JANELA");
-                    
-                    // Formatação da data e hora da chegada
-                    const dataChegadaOriginal = row[dataIndex].trim();
-                    const horaChegadaOriginal = row[horaIndex].trim();
-                    const dataChegadaParsed = new Date(dataChegadaOriginal);
-                    dataChegadaParsed.setHours(horaChegadaOriginal.split(":")[0]);
-                    dataChegadaParsed.setMinutes(horaChegadaOriginal.split(":")[1]);
+                    const hrPortariaIndex = data.EMBARQUES_PA[0].indexOf("HR PORTARIA");
                     
                     // Formatação da data e hora da janela
-                    const dataJanelaOriginal = row[dataIndex].trim();
+                    const dataOriginal = row[dataIndex].trim();
                     const horaJanelaOriginal = row[janelaIndex].trim();
-                    const dataJanelaParsed = new Date(dataJanelaOriginal);
+                    const dataJanelaParsed = new Date(dataOriginal);
                     dataJanelaParsed.setHours(horaJanelaOriginal.split(":")[0]);
                     dataJanelaParsed.setMinutes(horaJanelaOriginal.split(":")[1]);
                     
-                    // Cálculo da diferença de tempo para Status
-                    const horaAtual = new Date();
-                    const diferencaMinutosChegada = (horaAtual.getTime() - dataChegadaParsed.getTime()) / (1000 * 60);
-                    
-                    // Lógica para status
-                    let status;
-                    if (diferencaMinutosChegada > 120) { 
-                        status = "ATRASADO";
-                    } else {
-                        status = "NO PRAZO";
-                    }
-                    
-                    // Lógica para statusPlan
-                    const diferencaMinutosPlan = (dataJanelaParsed.getTime() - horaAtual.getTime()) / (1000 * 60);
-                    let statusPlan;
-                    if (diferencaMinutosPlan <= 120) { 
-                        statusPlan = "PLAN.ATRASO";
-                    } else {
-                        statusPlan = "PLAN.NOPRAZO";
-                    }
+                    // Verificar HR PORTARIA
+                    const hrPortaria = row[hrPortariaIndex] || '';
                     
                     // Cálculo da diferença de tempo para Status Carregamento X JANELA
-                    const diferencaMinutosCarregamentoJanela = (horaAtual.getTime() - dataJanelaParsed.getTime()) / (1000 * 60);
-                    
-                    // Lógica para Status Carregamento X JANELA
                     let statusCarregamentoJanela;
-                    if (diferencaMinutosCarregamentoJanela > 120) { 
+                    
+                    if (hrPortaria === '') {
                         statusCarregamentoJanela = "ATRASO.JANELA";
                     } else {
-                        statusCarregamentoJanela = "NO.PRAZO.JANELA";
+                        const horaPortariaOriginal = hrPortaria.trim();
+                        const dataPortariaParsed = new Date(dataOriginal);
+                        dataPortariaParsed.setHours(horaPortariaOriginal.split(":")[0]);
+                        dataPortariaParsed.setMinutes(horaPortariaOriginal.split(":")[1]);
+                        
+                        const diferencaMinutosJanela = Math.abs((dataPortariaParsed.getTime() - dataJanelaParsed.getTime()) / (1000 * 60));
+                        
+                        statusCarregamentoJanela = diferencaMinutosJanela > 120 ? "ATRASO.JANELA" : "NO.PRAZO.JANELA";
                     }
+                    
+                    // Lógica para status e statusPlan (mantida a mesma)
+                    const horaChegadaIndex = data.EMBARQUES_PA[0].indexOf("HR CHEGADA DOCA");
+                    const horaChegadaOriginal = row[horaChegadaIndex].trim();
+                    const dataChegadaParsed = new Date(dataOriginal);
+                    dataChegadaParsed.setHours(horaChegadaOriginal.split(":")[0]);
+                    dataChegadaParsed.setMinutes(horaChegadaOriginal.split(":")[1]);
+                    
+                    const horaAtual = new Date();
+                    const diferencaMinutosChegada = (horaAtual.getTime() - dataChegadaParsed.getTime()) / (1000 * 60);
+                    const status = diferencaMinutosChegada > 120 ? "ATRASADO" : "NO PRAZO";
+                    
+                    const diferencaMinutosPlan = (dataJanelaParsed.getTime() - horaAtual.getTime()) / (1000 * 60);
+                    const statusPlan = diferencaMinutosPlan <= 120 ? "PLAN.ATRASO" : "PLAN.NOPRAZO";
                     
                     row.push(formatDateTime(), status, statusPlan, statusCarregamentoJanela);
                 }
                 return row;
             });
-            lastDataPA = updateTable("tablePA", data.EMBARQUES_PA, lastDataPA);
-            lastDataFabrica = updateTable("tableFabrica", data.EMBARQUES_FABRICA, lastDataFabrica);
+            
+            lastDataPA = updateTable("tablePA", data.EMBARQUES_PA, lastDataPA, 'CARREGAMENTOS PA');
+            lastDataFabrica = updateTable("tableFabrica", data.EMBARQUES_FABRICA, lastDataFabrica, '');
             showTab(currentTab);
             hideLoadingOverlay();
         })
@@ -674,9 +795,9 @@ function showTab(tabName) {
         <div class="info-container"></div>
         <img src="LogoCEVA.jpg" class="logo" alt="Logo">
         <div class="legenda">
-            <span class="vermelho">PLANEJAMENTO :</span> "OK" até 2 horas antes da janela<br>
-            <span class="vermelho">JANELA CARREGAMENTO FAREVA :</span> 2 horas para carregar a contar da "JANELA"<br>
-            <span class="vermelho">CARREGAMENTO CEVA :</span> 2 horas a contar da "HR CHEGADA DOCA"
+            <span class="vermelho">PLANEJAMENTO :</span> Deve estar OK até 2hrs antes da janela<br>
+            <span class="vermelho">JANELA x HR PORTARIA:</span> Maior que 2Hrs = FORA DO PRAZO<br>
+            <span class="vermelho">CARREGAMENTO CEVA :</span> 2Hrs a contar da "HR CHEGADA DOCA"
         </div>
     </div>
     <div class="tab-buttons">
