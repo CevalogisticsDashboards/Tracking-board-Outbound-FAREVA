@@ -6,8 +6,6 @@
 
 /*_________________________________ INICIO CSS__________________________________________________  */
 
-/*_________________________________ INICIO CSS__________________________________________________  */
-
 /* Estilo base do corpo da página */
 body {
     font-family: Arial, sans-serif;
@@ -371,8 +369,8 @@ tr:nth-child(even) {
 }
 
 /* Esconder últimas 4 colunas apenas da tabela PA */
-#tablePA tr th:nth-last-child(-n+4),
-#tablePA tr td:nth-last-child(-n+4) {
+#tablePA tr th:nth-last-child(-n+0),
+#tablePA tr td:nth-last-child(-n+0) {
     display: none;
 }
 
@@ -513,6 +511,9 @@ function updateTable(tableId, newData, lastData, currentTabName) {
         if (shouldShowRow(row, newData[0])) {
             let tr = document.createElement("tr");
 
+            // Check if this specific row should have blinking JANELA and HR PORTARIA columns
+            const shouldBlinkColumns = row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA';
+
             // Variables to track blinking rows and delay in window
             let linhaPiscando = false;
             let atrasoJanela = false;
@@ -541,12 +542,12 @@ function updateTable(tableId, newData, lastData, currentTabName) {
             row.forEach((cell, index) => {
                 let td = document.createElement("td");
 
-                // Apply blinking style for specific columns when there is a delay
-                if (linhaPiscando && [janelaIndex, hrPortariaIndex].includes(index)) {
+                // Modify the blinking logic to only apply to specific columns when statusCarregamentoXJanela is 'ATRASO.JANELA'
+                if (shouldBlinkColumns && (index === janelaIndex || index === hrPortariaIndex)) {
                     td.classList.add('coluna-azul-claro-piscando');
                 }
-                // Apply red background and white text for "JANELA" and "HR PORTARIA" columns when there is a window delay
-                else if (atrasoJanela && (index === janelaIndex || index === hrPortariaIndex)) {
+                // Apply red background and white text for JANELA and HR PORTARIA columns when there is a window delay
+                else if (shouldBlinkColumns && (index === janelaIndex || index === hrPortariaIndex)) {
                     td.style.backgroundColor = 'red';
                     td.style.color = 'white';
                 }
