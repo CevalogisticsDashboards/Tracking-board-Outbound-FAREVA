@@ -540,17 +540,18 @@ function updateTable(tableId, newData, lastData, currentTabName) {
             }
 
             row.forEach((cell, index) => {
-                let td = document.createElement("td");
+    let td = document.createElement("td");
 
-                // Modify the blinking logic to only apply to specific columns when statusCarregamentoXJanela is 'ATRASO.JANELA'
-                if (shouldBlinkColumns && (index === janelaIndex || index === hrPortariaIndex)) {
-                    td.classList.add('coluna-azul-claro-piscando');
-                }
-                // Apply red background and white text for JANELA and HR PORTARIA columns when there is a window delay
-                else if (shouldBlinkColumns && (index === janelaIndex || index === hrPortariaIndex)) {
-                    td.style.backgroundColor = 'red';
-                    td.style.color = 'white';
-                }
+    // Modify the blinking logic to only apply to specific columns when statusCarregamentoXJanela is 'ATRASO.JANELA'
+    const statusCarregamentoXJanelaIndex = row.length - 1; // Assuming this is the last column added
+    const shouldBlinkColumns = row[statusCarregamentoXJanelaIndex] === 'ATRASO.JANELA';
+
+    if (shouldBlinkColumns && 
+    (index === janelaIndex || index === hrPortariaIndex) && 
+    row[hrPortariaIndex] !== '') {
+    td.classList.add('coluna-azul-claro-piscando');
+}
+                
                 // Apply light blue background for specific columns
                 else if ([cargaIndex, palletsIndex, janelaIndex, hrPortariaIndex].includes(index)) {
                     td.classList.add('coluna-azul-claro');
