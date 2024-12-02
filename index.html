@@ -660,7 +660,7 @@ function fetchData() {
                         
                         const diferencaMinutosJanela = Math.abs((dataPortariaParsed.getTime() - dataJanelaParsed.getTime()) / (1000 * 60));
                         
-                        statusCarregamentoJanela = diferencaMinutosJanela > 120 ? "ATRASO.JANELA" : "NO.PRAZO.JANELA";
+                        //statusCarregamentoJanela = diferencaMinutosJanela <120 ? "NO.PRAZO.JANELA" : "ATRASO.JANELA"
                     }
                     
                     // Lógica para status e statusPlan (mantida a mesma)
